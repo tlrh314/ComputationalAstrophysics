@@ -1,18 +1,21 @@
+import cProfile
+
 from amuse.lab import *
 from amuse.units import units
 
 
-def main(Ncl, mcl, rcl, t_end, n_steps):
+def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm):
     converter = nbody_system.nbody_to_si(mcl, rcl)
     bodies = new_plummer_model(Ncl, convert_nbody=converter)
 
-    gravity = BHTree(converter)
+    if algorithm == "BHTree":
+        gravity = BHTree(converter)
     gravity.particles.add_particles(bodies)
     channel_from_gravity_to_framework = gravity.particles.\
         new_channel_to(bodies)
 
     write_set_to_file(bodies.savepoint(0.0 | t_end.unit),\
-        "nbody.hf5", "hdf5", append_to_file=False)
+        "nbody.hdf5", "hdf5", append_to_file=False)
 
     Etot_init = gravity.kinetic_energy + gravity.\
         potential_energy
@@ -55,6 +58,8 @@ def new_option_parser():
     result.add_option("-r", unit=units.parsec, dest="rcl", type="float",
                       default=10 | units.parsec,
                       help="cluster half-mass radius [%default")
+    result.add_option("-A", dest="algorithm", type="string",
+                      default="BHTree", help="algorithm choice [%default]")
     return result
 
 
@@ -64,8 +69,4 @@ if __name__ in '__main__':
                           precision=4, prefix="", separator=" [",
                           suffix="]")
     o, arguments = new_option_parser().parse_args()
-    print o
     main(**o.__dict__)
-
-
-    # 1A
