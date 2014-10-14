@@ -5,11 +5,14 @@ from amuse.units import units
 
 
 def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm):
+    verbose = False
     converter = nbody_system.nbody_to_si(mcl, rcl)
     bodies = new_plummer_model(Ncl, convert_nbody=converter)
 
     if algorithm == "BHTree":
         gravity = BHTree(converter)
+    elif algorithm == "Hermite":
+        gravity = Hermite(converter)
     gravity.particles.add_particles(bodies)
     channel_from_gravity_to_framework = gravity.particles.\
         new_channel_to(bodies)
@@ -35,12 +38,14 @@ def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm):
         Epot = gravity.potential_energy
         Etot = Ekin + Epot
 
-        print "T =", time, "M =", bodies.mass.sum(), "E =", Etot, "Q =",\
-                Ekin / Epot,
-        print "dE =", (Etot_init - Etot) / Etot, "ddE =", (Etot_prev -
-                Etot) / Etot
+        if verbose:
+            print "T =", time, "M =", bodies.mass.sum(), "E =", Etot, "Q =",\
+                    Ekin / Epot,
+            print "dE =", (Etot_init - Etot) / Etot, "ddE =", (Etot_prev -
+                    Etot) / Etot
 
     gravity.stop()
+    return (Etot_init - Etot) / Etot
 
 
 def new_option_parser():
