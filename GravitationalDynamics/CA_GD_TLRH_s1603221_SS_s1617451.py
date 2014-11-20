@@ -6,6 +6,8 @@ Computational Astrophysics / Gravitational Dynamics
 Simulating Ultra Compact Dwarf Galaxies with AMUSE
 
 Timo Halbesma, s1603221.
+Shebaz Sultan, s1617451.
+
 November 25, 2014. Version 1.0.
 """
 
