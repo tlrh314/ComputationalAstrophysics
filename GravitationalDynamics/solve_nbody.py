@@ -29,11 +29,15 @@ def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree):
 
     verbose = True # For AMUSE functions this is called redirection.
     algorithm_name = str(algorithm).split('.')[-1][:-2]
+    runtime_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
+                                     dtype=numpy.float64)
+    dE_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
+                                dtype=numpy.float64)
 
     # Allow selecting Stellar Dynamics code trough a function argument.
     try:
-        if algorithm_name == 'hermite':
-            gravity = algorithm(converter, number_of_workers=3)
+        if algorithm_name == 'Hermite':
+            gravity = algorithm(converter, number_of_workers=8)
         else:
             gravity = algorithm(converter)
     except Exception, e:  # Too generic, but I don't know what Error to expect.
