@@ -28,12 +28,17 @@ def assignment_1a(algorithm=BHTree):
     options = dict()
     stars = numpy.array([1, 2, 4, 8, 16, 32, 64, 128, 256,
                          512, 1024], dtype=numpy.int16)
+    t_end = numpy.array([1, 2, 4, 8, 16, 32], dtype=numpy.int8)
 
     options['mcl'] = 10**7 | units.MSun
     options['rcl'] = 10 | units.parsec
     options['n_steps'] = 100
-    options['t_end'] = 32 | units.Myr
     options['algorithm'] = algorithm
+
+    runtime_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
+                                     dtype=numpy.float64)
+    dE_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
+                                dtype=numpy.float64)
 
     for i, N in enumerate(stars):
         for j, t in enumerate(t_end):
@@ -94,7 +99,7 @@ if __name__ in '__main__':
     # To implement...
 
     # Assignment 1C
-    for integrator in [Huayno, BHTree, PhiGRAPE, Hermite]:
+    for integrator in [Huayno, BHTree, Hermite]:
         stars, t_end, dE, runtime, algorithm = assignment_1a(integrator)
         plot_1a(stars, t_end, runtime, "runtime", algorithm)
         plot_1a(stars, t_end, dE, "dE", algorithm)
