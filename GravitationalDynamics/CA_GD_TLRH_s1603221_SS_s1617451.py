@@ -24,23 +24,21 @@ from amuse.community.phiGRAPE.interface import PhiGRAPE
 from solve_nbody import nbody_integrator
 
 
-def assignment_1a(algorithm=Hermite):
+def assignment_1a(algorithm=BHTree):
     options = dict()
-    stars = numpy.array([1, 2, 4, 8, 16, 32, 65, 128, 256,
+    stars = numpy.array([1, 2, 4, 8, 16, 32, 64, 128, 256,
                          512, 1024], dtype=numpy.int16)
-    #stars = numpy.array([1, 2, 4, 8], dtype=numpy.int16)
     t_end = numpy.array([1, 2, 4, 8, 16, 32], dtype=numpy.int8)
-    #t_end = numpy.array([1, 2, 4], dtype=numpy.int8)
-
-    runtime_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
-                                     dtype=numpy.float64)
-    dE_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
-                                dtype=numpy.float64)
 
     options['mcl'] = 10**7 | units.MSun
     options['rcl'] = 10 | units.parsec
     options['n_steps'] = 100
     options['algorithm'] = algorithm
+
+    runtime_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
+                                     dtype=numpy.float64)
+    dE_of_N_and_t = numpy.zeros((len(stars), len(t_end)),
+                                dtype=numpy.float64)
 
     for i, N in enumerate(stars):
         for j, t in enumerate(t_end):
@@ -92,16 +90,16 @@ def plot_1a(stars, t_end, to_plot, choice, algorithm):
 
 if __name__ in '__main__':
     # Assignment 1A
-    stars, t_end, dE, runtime, algorithm = assignment_1a()
-    plot_1a(stars, t_end, runtime, "runtime", algorithm)
-    plot_1a(stars, t_end, dE, "dE", algorithm)
+    #stars, t_end, dE, runtime, algorithm = assignment_1a(Hermite)
+    #plot_1a(stars, t_end, runtime, "runtime", algorithm)
+    #plot_1a(stars, t_end, dE, "dE", algorithm)
     # pyplot.show()  # Only works in AMUSE 8.1 (binary)
 
     # Assignment 1B
     # To implement...
 
     # Assignment 1C
-    for integrator in [Huayno, BHTree, PhiGRAPE, Hermite]:
+    for integrator in [Huayno, BHTree, Hermite]:
         stars, t_end, dE, runtime, algorithm = assignment_1a(integrator)
         plot_1a(stars, t_end, runtime, "runtime", algorithm)
         plot_1a(stars, t_end, dE, "dE", algorithm)

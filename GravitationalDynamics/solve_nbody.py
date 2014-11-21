@@ -32,8 +32,8 @@ def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree):
 
     # Allow selecting Stellar Dynamics code trough a function argument.
     try:
-        if algorithm_name == 'hermite':
-            gravity = algorithm(converter, number_of_workers=3)
+        if algorithm_name == 'Hermite':
+            gravity = algorithm(converter, number_of_workers=8)
         else:
             gravity = algorithm(converter)
     except Exception, e:  # Too generic, but I don't know what Error to expect.
