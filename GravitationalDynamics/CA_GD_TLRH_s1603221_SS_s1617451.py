@@ -84,10 +84,11 @@ def plot_1a(stars, t_end, to_plot, choice, algorithm):
     ax.set_xlabel("N")
     ax.set_xscale('log', basex=2)
     ax.legend(loc=2)  # upper left
-    pyplot.savefig("plots/CA_GD_TLRH_s1603221_{0}_{1}"
+    pyplot.savefig("plots/CA_GD_TLRH_s1603221_SS_s1617451_{0}_{1}"
                    .format(algorithm_name, choice))
 
 
+<<<<<<< HEAD
 def radius_dependency(algorithm=BHTree):
     options = dict()
     radii = numpy.array([1, 2, 4, 8, 16, 32, 64, 128, 256,
@@ -110,24 +111,73 @@ def radius_dependency(algorithm=BHTree):
 
 
 
+=======
+def radius_dependency(algorithm, radii, N, t):
+    options = dict()
+
+    runtime_of_r = numpy.zeros(len(radii), dtype=numpy.float64)
+
+    options['Ncl'] = N
+    options['mcl'] = 10**7 | units.MSun
+    options['t_end'] = t | units.Myr
+    options['n_steps'] = 100
+    options['algorithm'] = algorithm
+
+    for i, radius in enumerate(radii):
+        options['rcl'] = radius | units.parsec
+        t_start = time()
+        nbody_integrator(**options)
+        runtime_of_r[i] = (time() - t_start)
+        print "Runtime: {0}".format(runtime_of_r[i])
+
+    return runtime_of_r
+
+
+def plot_radius_dependency(radii, N, t, runtimes):
+    colors = {'BHTree': 'r', 'Hermite': 'y', 'Huayno': 'g', 'PhiGRAPE': 'b',
+              'Mercury': 'c', 'mmc': 'm'}
+
+    fig, ax = pyplot.subplots()
+
+    for algorithm, times in runtimes.items():
+        ax.scatter(radii, times,
+                   color=colors.get(algorithm, 'k'),
+                   label=algorithm)
+
+    ax.set_title("Radius Dependency for N={0}, t_end={1}"
+                 .format(N, t))
+    ax.set_xlabel("Cluster Half-Mass Radius rcl (parsec)")
+    ax.set_ylabel("Wall-clock time (s)")
+
+    ax.set_xscale('log', basex=2)
+    ax.legend(loc=2)  # upper left
+    pyplot.savefig("plots/CA_GD_TLRH_s1603221_SS_s1617451_rcldep_N{0}_t-end{1}"
+                   .format(N, t))
 
 if __name__ in '__main__':
     # Assignment 1A
-    #stars, t_end, dE, runtime, algorithm = assignment_1a(Hermite)
-    #plot_1a(stars, t_end, runtime, "runtime", algorithm)
-    #plot_1a(stars, t_end, dE, "dE", algorithm)
+    # stars, t_end, dE, runtime, algorithm = assignment_1a(Hermite)
+    # plot_1a(stars, t_end, runtime, "runtime", algorithm)
+    # plot_1a(stars, t_end, dE, "dE", algorithm)
     # pyplot.show()  # Only works in AMUSE 8.1 (binary)
 
     # Assignment 1B
     # To implement...
 
     # Assignment 1C
-    for integrator in [Huayno, BHTree, Hermite]:
-        # stars, t_end, dE, runtime, algorithm = assignment_1a(integrator)
-        # plot_1a(stars, t_end, runtime, "runtime", algorithm)
-        # plot_1a(stars, t_end, dE, "dE", algorithm)
-        # pyplot.show()  # Only works in AMUSE 8.1 (binary)
+    radii = numpy.array([1, 2, 4, 8, 16, 32, 64, 128, 256,
+                         512, 1024], dtype=numpy.int16)
 
-        radius_dependency(integrator)
-        # raw_input("Press enter to continue")
+    for N in [8, 16, 32]:
+        for t in [8, 16, 32]:
+            for integrator in [BHTree, Hermite, Huayno]:
+                # stars, t_end, dE, runtime, algorithm = assignment_1a(integrator)
+                # plot_1a(stars, t_end, runtime, "runtime", algorithm)
+                # plot_1a(stars, t_end, dE, "dE", algorithm)
+                # pyplot.show()  # Only works in AMUSE 8.1 (binary)
 
+                algorithm_name = str(integrator).split('.')[-1][:-2]
+                runtime_of_radii[algorithm_name] = radius_dependency(integrator, radii, N, t)
+                # raw_input("Press enter to continue")
+
+            plot_radius_dependency(radii, N, t, runtime_of_radii)

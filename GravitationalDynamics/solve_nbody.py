@@ -23,17 +23,17 @@ from amuse.lab import set_printing_strategy, zero
 from amuse.units import units, nbody_system
 
 
-def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree):
+def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree, timestep=None):
     converter = nbody_system.nbody_to_si(mcl, rcl)
     bodies = new_plummer_model(Ncl, convert_nbody=converter)
 
-    verbose = True # For AMUSE functions this is called redirection.
+    verbose = False # For AMUSE functions this is called redirection.
     algorithm_name = str(algorithm).split('.')[-1][:-2]
 
     # Allow selecting Stellar Dynamics code trough a function argument.
     try:
         if algorithm_name == 'Hermite':
-            gravity = algorithm(converter, number_of_workers=8)
+            gravity = algorithm(converter, number_of_workers=4)
         else:
             gravity = algorithm(converter)
     except Exception, e:  # Too generic, but I don't know what Error to expect.
@@ -43,12 +43,14 @@ def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree):
         print traceback.format_exc()
         return None
     else:
-        print "\nUsing algorithm '{0}', Ncl={1}, t_end={2}"\
-            .format(algorithm_name, Ncl, t_end)
+        print "\nUsing algorithm '{0}', Ncl={1}, t_end={2}, rcl={3}"\
+            .format(algorithm_name, Ncl, t_end, rcl)
 
 
     # Assignment 1B
-    # gravity.parameters.timestep = 0.03125
+    if (timestep):
+        print timestep
+        gravity.parameters.timestep = timestep | units.Myr
 
     gravity.particles.add_particles(bodies)
     channel_from_gravity_to_framework = gravity.particles.\
