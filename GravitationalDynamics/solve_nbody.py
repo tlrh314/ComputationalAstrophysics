@@ -23,11 +23,11 @@ from amuse.lab import set_printing_strategy, zero
 from amuse.units import units, nbody_system
 
 
-def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree):
+def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree, timestep=None):
     converter = nbody_system.nbody_to_si(mcl, rcl)
     bodies = new_plummer_model(Ncl, convert_nbody=converter)
 
-    verbose = True # For AMUSE functions this is called redirection.
+    verbose = False # For AMUSE functions this is called redirection.
     algorithm_name = str(algorithm).split('.')[-1][:-2]
 
     # Allow selecting Stellar Dynamics code trough a function argument.
@@ -48,7 +48,9 @@ def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, algorithm=BHTree):
 
 
     # Assignment 1B
-    # gravity.parameters.timestep = 0.03125
+    if (timestep):
+        print timestep
+        gravity.parameters.timestep = timestep | units.Myr
 
     gravity.particles.add_particles(bodies)
     channel_from_gravity_to_framework = gravity.particles.\
