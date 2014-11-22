@@ -88,6 +88,29 @@ def plot_1a(stars, t_end, to_plot, choice, algorithm):
                    .format(algorithm_name, choice))
 
 
+def radius_dependency(algorithm=BHTree):
+    options = dict()
+    radii = numpy.array([1, 2, 4, 8, 16, 32, 64, 128, 256,
+                         512, 1024], dtype=numpy.int16)
+
+    runtime_of_r_and_t = numpy.zeros(len(radii),
+                                     dtype=numpy.float64)
+
+    options['mcl'] = 10**7 | units.MSun
+    options['n_steps'] = 100
+    options['Ncl'] = 32
+    options['t_end'] = 16 | units.Myr
+    options['algorithm'] = algorithm
+
+    for i, radius in enumerate(radii):
+        t_start = time()
+        runtime_of_r_and_t[i] = (time() - t_start)
+        print str(radius) + ', ' + str(time() - t_start)\
+            + ', ' + str(runtime_of_r_and_t[i])
+
+
+
+
 if __name__ in '__main__':
     # Assignment 1A
     #stars, t_end, dE, runtime, algorithm = assignment_1a(Hermite)
@@ -100,9 +123,11 @@ if __name__ in '__main__':
 
     # Assignment 1C
     for integrator in [Huayno, BHTree, Hermite]:
-        stars, t_end, dE, runtime, algorithm = assignment_1a(integrator)
-        plot_1a(stars, t_end, runtime, "runtime", algorithm)
-        plot_1a(stars, t_end, dE, "dE", algorithm)
+        # stars, t_end, dE, runtime, algorithm = assignment_1a(integrator)
+        # plot_1a(stars, t_end, runtime, "runtime", algorithm)
+        # plot_1a(stars, t_end, dE, "dE", algorithm)
         # pyplot.show()  # Only works in AMUSE 8.1 (binary)
+
+        radius_dependency(integrator)
         # raw_input("Press enter to continue")
 
