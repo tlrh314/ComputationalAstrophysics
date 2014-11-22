@@ -6,6 +6,7 @@ from amuse.units import units
 
 from solve_nbody import nbody_integrator
 
+# Assignment 1B
 if __name__ in '__main__':
     options = {}
     options['mcl'] = 10**7 | units.MSun
@@ -26,9 +27,8 @@ if __name__ in '__main__':
             error += abs(nbody_integrator(**options))
         print timestep, error
         error_for_timestep.append((timestep, error/trials))
-    
-    
-    pyplot.scatter([i[0] for i in error_for_timestep], 
+
+    pyplot.scatter([i[0] for i in error_for_timestep],
             [i[1] for i in error_for_timestep])
     pyplot.xlabel("timestep (fraction of dt)")
     pyplot.ylabel("magnitude of relative error")
@@ -39,4 +39,4 @@ if __name__ in '__main__':
             "Relative Energy Error as function of timestep for Barnes-Hut, N="
             +str(N)+",\n t_end="+str(t_end)+", "+str(trials)+
             " trials per datapoint")
-    pyplot.savefig("error_for_timestep")
+    pyplot.savefig("plots/error_for_timestep")
