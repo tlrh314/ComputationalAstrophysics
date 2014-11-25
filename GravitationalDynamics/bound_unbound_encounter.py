@@ -8,7 +8,7 @@ from amuse.lab import new_plummer_model
 from amuse.units import units, nbody_system
 from amuse.datamodel import Particle
 from amuse.plot import scatter, xlabel, ylabel
-from amuse.lab import zero
+from amuse.lab import zero, Kepler
 
 from find_bound_mass import find_bound_bodies, find_bound_bodies_using_energies
 
@@ -70,6 +70,7 @@ def nbody_integrator(Ncl, mcl, rcl, t_end, n_steps, escape_velocity_fraction, R)
         channel_from_gravity_to_framework.copy()
         x+=1
     plot_cluster(bodies, base_path+str(x),time, rcl, V)
+
     gravity.stop()
     return V, bodies
 
@@ -86,6 +87,19 @@ def find_cluster_bound_mass_fraction(bodies, energy=False):
 
 
 
+
+
+def find_kepler_parameters(bodies, converter):
+    kep = Kepler(converter)
+    kep.initialize_code()
+    bh = bodies[-1]
+    cluster = bodies[:-1]
+    pos = bh.position - cluster.center_of_mass()
+    vel = bh.velocity - cluster.center_of_mass_velocity()
+    kep.initialize_from_dyn(bh.mass + cluster.total_mass(), pos[0], pos[1], pos[2], vel[0], vel[1], vel[2])
+    a,e = kep.get_elements()
+    kep.stop()
+    return a,e
 
 
 if __name__ in '__main__':
@@ -113,6 +127,7 @@ if __name__ in '__main__':
             options["escape_velocity_fraction"] = j
             V, bodies = nbody_integrator(**options)
             hop_mass_fraction = find_cluster_bound_mass_fraction(bodies)
+            a,e = find_kepler_parameters(bodies, converter)
 
             data={}
             data["distance"] = R
@@ -120,7 +135,10 @@ if __name__ in '__main__':
             data["hop_mass_fraction"] = hop_mass_fraction
             data["escape_velocity_fraction"] = j
             data["velocity"] = V
+            data["kepler_params"] = (a,e)
             print radius, hop_mass_fraction
+            print a
+            print e
             datapoints.append(data)
     pickle.dump(datapoints, open("bound_mass_encounter.dat", "wb"))
 
