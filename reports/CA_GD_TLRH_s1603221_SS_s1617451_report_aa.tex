@@ -26,6 +26,7 @@ citecolor=black}
 % To add links in your PDF file, use the package "hyperref"
 % with options according to your LaTeX or PDFLaTeX drivers.
 %
+\newcommand{\Sun}[0]{\ensuremath{_{\odot}}}
 \begin{document} 
 
 
@@ -71,15 +72,15 @@ citecolor=black}
    {It is shown that the BHTree algorithm has the most favoured time complexity
    of $O(n \log n)$ as compared to $O(n^2)$ for Huayno and Hermite, the
    relative energy error can be reduced at higher cost of calculations by decreasing
-   the timestep. Having analysed different N-Body algorithm, the BHTree algorithm 
+   the time step. Having analysed different N-Body algorithm, the BHTree algorithm 
    is chosen to simulate a dwarf galaxy orbiting a black hole.}
   % conclusions heading (optional), leave it empty if necessary 
    {}
 
-   \keywords{Stellar Dynamics --
-                N-Body Algorithms --
+   \keywords{Gravitational Dynamics --
+                N-Body Simulation --
                 AMUSE --
-                Ultra Compact Dwarf Galaxies
+                Ultra Compact Dwarf Galaxy
                }
 
    \maketitle
@@ -87,59 +88,115 @@ citecolor=black}
 %________________________________________________________________
 
 \section{Introduction}
-For all assignments we have made use of the AMUSE framework \citep{2013CoPhC.183..456P, 2013A&A...557A..84P, 2009NewA...14..369P}.
+Over the last couple of years N-Body simulations are used on large scales to calculate astrophysical phenomena up to the size of the entire Universe, such as in the Millennium Simulations \citep{2005Natur.435..629S, 2009MNRAS.398.1150B, 2012MNRAS.426.2046A}. Furthermore, over 700 articles that contain the keyword `N-Body' can be retrieved trough ADS\footnote{This research has made use of NASA's Astrophysics Data System.} in 2014 alone. This shows that N-Body simulations still is a highly active area of research. 
 
-\section{BHTree Algorithm}
-  In this section the BHTree algorithm \citep{1986Natur.324..446B} will be briefly reviewed.
+This paper uses the AMUSE (Astrophysical Multipurpose Software Environment) framework \citep{2009NewA...14..369P, 2013CoPhC.183..456P, 2013A&A...557A..84P}. Within AMUSE several community codes are implemented and readily available by merely changing one line of code. This enables comparison between the available N-Body integrators. We will commence by comparing the following three algorithms: BHTree \citep{1986Natur.324..446B} in section~\ref{sec:BHTree}, Hermite \citep{1995ApJ...443L..93H} in section~\ref{sec:Hermite} and Huayno \citep{2012NewA...17..711P} in section \ref{sec:Huayno}. In Table~\ref{tab:algorithms} one can find a comparison of the general properties of the algorithms and in Table~\ref{tab:properties} we have listed the physical parameters we adopted in our simulations. Next, our focus turns to the gravitational dynamics in galaxies. In section~\ref{sec:orbitBH_MW_Mass} we present the results of the simulation of 1024 stars in a circular orbit around a black hole with the mass $M = 1.26 \cdot 10^{12}$ M\Sun, which is equal to the mass of the Milky Way \citep{2011MNRAS.414.2446M}. Our main goal is to simulate an ultra compact dwarf galaxy using the AMUSE framework. 
 
-  In Figure~\ref{fig:BHTree_runtime} and Figure~\ref{fig:BHTree_dE}
+
+\begin{table*}
+\caption{Properties of the three chosen N-Body integrators \citep{AMUSEdocumentation}}             
+\label{tab:algorithms}      
+\centering          
+\begin{tabular}{c c c c l l l }     % 7 columns 
+\hline\hline       
+                      % To combine 4 columns into a single one 
+Algorithm & Approximation Scheme & Time step Scheme & Time Complexity \\ 
+\hline                    
+   BHTree & Tree & Shared / Fixed & $O(n \log n)$ \\
+   Hermite & Direct & Shared / Variable & $O(n^2)$ \\
+   Huayno & Approx symplectic & - & $O(n^2)$ \\
+\hline                  
+\end{tabular}
+\end{table*}
+
+
+   \begin{table}
+      \caption[]{Physical properties of the cluster.}
+         \label{tab:properties}
+         \begin{tabular}{lll}
+            \hline
+            \noalign{\smallskip}
+            Variable  & Description &  Default value \\
+            \noalign{\smallskip}
+            \hline
+            \noalign{\smallskip}
+	    N & Number of stars in the cluster. & 100  \\
+	    t\_end & End time of simulation. & 1 Myr \\
+	    n\_steps & Number of time steps & 100 \\
+	    mcl & Cluster mass. & $10^7$ M\Sun \\
+	    rcl & Cluster half-mass radius. & 10 parsec \\
+            \noalign{\smallskip}
+            \hline
+         \end{tabular}
+   \end{table}
+   
+\section{BHTree Algorithm} \label{sec:BHTree}
+In this section the BHTree algorithm will be reviewed. We consider how the time complexity and relative energy error scale with the number of particles $n$. In addition, we consider how the code scales with the size of the galaxy. Lastly, we consider how the relative energy error depends on the chosen time step.
+
+NB, the BHTree has, by default, a time step of $2^{-6}$ unit time and an opening angle 0.75 unit length squared. In Figure~\ref{fig:BHTree_runtime} the wall clock time as a function of the number of particles $N$, for $N \in [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]$, is given. In addition, we have included the time $t_{\rm end}$, for $t_{\rm end} \in [1, 2, 4, 8, 16, 32]$ Myr with different colours for each maximum integration time. Since we set a fixed number of steps, $\Delta t$ differs for each maximum integration time, so one can not simply run the code for 32 Myrs only.
+  The BHTree algorithm has an expected time-complexity of $O(n \log n)$ because the code divides the system in an octree. This way particles far away can be grouped together to consider their cumulative effect as a point mass in the center of mass of the subsystem. This drastically reduces the cost of the algorithm in terms of how time consuming it is as compared to direct N-Body algorithms of $O(n^2)$ time complexity. 
+
+The relative energy error can be found in Figure~\ref{fig:BHTree_dE}. It can be noted from this figure that the relative energy error seems to increase exponentially for $t_{\rm end}$ = 2 Myr. This behaviour could be seen for 8 Myr as well, but the datapoints appear to alternate. Another observation is that the spread in relative energy between different integration end time errors appears to decrease when the number of particles increases. For lower $N$ values the spread is four decades, whereas all integration end time errors lie within the same order of magnitude for 1024 particles.
+
+As the relative energy error for the BHTree is in the order of $10^{-2}$ and the time step scheme is shared / fixed, we are interested in the behaviour of the algorithm when the time step changes. Figure~\ref{fig:timestep_dependency} shows the relative energy error as a function of time step for a fixed number of particles $N = 1024$ when the integration end time $t_{\rm end} = 2$ Myr. This is a lin-log plot of the average values over 10 runs. For $dt$ down to $2^{-4}$ we see no significant changes, but for even smaller time steps we observe an increasing energy error, contrary to our expectations. The default time step is $2^{-6}$, which we adopted for further usage of the BHTree algorithm. We do so because this seems to be the optimal time step because for smaller time steps the energy error starts to increase.
   
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{../GravitationalDynamics/plots/CA_GD_TLRH_s1603221_SS_s1617451_BHTree_runtime.png}
-      \caption{Wall-clock time as a function of both N and integration 
-               end time for BHTree.
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_BHTree_runtime_log.png}
+      \caption{Log-log plot of the wall-clock time as a function of both N and integration 
+               end time for BHTree. Different colours indicate different end times $t_{\rm end}$ of the integration.
               }
          \label{fig:BHTree_runtime}
    \end{figure}
    
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{../GravitationalDynamics/plots/CA_GD_TLRH_s1603221_SS_s1617451_BHTree_dE.png}
-      \caption{Relative energy error as a function of both N and integration 
-               end time for BHTree.
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_BHTree_dE_log.png}
+      \caption{Log-log plot of the relative energy error (absolute value) as a function of both N and integration 
+               end time for BHTree. Different colours indicate different end times $t_{\rm end}$ of the integration.
               }
          \label{fig:BHTree_dE}
    \end{figure}
+     
+   \begin{figure}
+   \centering
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_rcldep_N16_t-end8.png}
+      \caption{Wall-clock time (s) as a function of cluster half-mass radius rcl (parsec) comparison of
+      	      BHTree, Huayno and Hermite algorithms for N = 8 particles, integrated until t\_end = 16 Myr.
+	      Here we can see that for all three algorithms the time is constant as a function of the cluster size apart for the Hermite
+	      algorithm that has an incredibly high runtime for one and two particles. For one particle the Hermite runtime is 3622 s, which is behind the legend. 
+              }
+         \label{fig:radius_dependency}
+   \end{figure}  
 
-The cluster size $r$ is passed to the nbody\_integrator function as parameter
-named `rcl'. This parameter is only used in amuse.units.nbbody\_system, which is
-responsible for the creation of bodies within a convined cluster with half-mass
-radius `rcl'. The distance between individual particles could increase  as the
-cluster half mass radius increases. This maximum distance between particles
-scales linearly with the cluster half mass radius. The distance between
-particles can be found in the force, but the number of times the force is
-calculated does not depend on it. If the cluster size increases and the number
-of paricles is unchanged, then at a certain point in time more particles could
-be further away. In that case more particles will be bundles together in the
-same BHTree, thus, in principle the calculation time could decrease as the
-cluster size r increases if particles move further away. 
-
-%__________________________________________________________________
-
-\section{Hermite Algorithm}
-   In this section the Hermite algorithm \citep{1995ApJ...443L..93H} will
-   be briefly reviewed. The resulting stability criteria will be
-   rewritten in terms of local state variables, local timescales and
-   constitutive relations.
-   
-   Figure~\ref{fig:Hermite_runtime} and Figure~\ref{fig:Hermite_dE}
+The cluster size $r$ is passed to the nbody\_integrator function as parameter named `rcl'. This parameter is only used in amuse.units.nbbody\_system, which is responsible for the creation of bodies within a confined cluster with half-mass radius `rcl'. The distance between individual particles could increase  as the cluster half mass radius increases. This maximum distance between particles scales linearly with the cluster half mass radius. The distance between particles is a parameter required to calculate the force, but the number of times the force is
+  calculated does not depend on it. If the cluster size increases and the number of particles is unchanged, then at a certain point in time more particles could be further away. In that case more particles will be `bundled' together in the same BHTree node, thus, in principle the calculation time could decrease as the cluster size $r$ increases if particles move further away. This prediction could be seen in Figure~\ref{fig:radius_dependency}. Moreover, it is shown that the runtime is roughly constant as a function of cluster size for the all algorithm for clusters of size greater than $2^6$ parsec. Do note that the Hermite calculation time significantly increases for lower cluster sizes. This is due to the predictor-corrector nature of the algorithm that requires significantly more steps to predict and correct when the cluster size is small. This feature of the Hermite algorithm is highly time consuming.
 
 
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{../GravitationalDynamics/plots/CA_GD_TLRH_s1603221_SS_s1617451_Hermite_runtime.png}
-      \caption{Wall-clock time as a function of both N and integration 
+   \includegraphics[width=\hsize]{img/error_for_timestep.png}
+      \caption{This plot shows that for the BHTree the relative energy error (absolute value) increases as the time step decreases from 0.625 onwards. 
+      	 	   All computed values are within the same order of magnitude with at most a factor of two difference between the time steps.
+                    }
+         \label{fig:timestep_dependency}
+   \end{figure}
+
+
+%__________________________________________________________________
+
+\section{Hermite Algorithm} \label{sec:Hermite}
+In this section the Hermite algorithm will be reviewed. Our methods and analysis is similar as described in Section~\ref{sec:BHTree} for the BHTree save for two noticeable differences. Firstly, we have limited our maximum number of particles considered in the analysis to 32. We have chosen to due so owing to time constrains. Where the maximum runtime for the BHTree was in the order of $10^2$, the runtime for the Hermite integrator exceeded a thousand seconds for 32 particles alone. For 1024 particles, the expected number of force calculations should be in the order of a million. Although this amount of calculations should easily lie within the abilities of modern day processing power (even on laptop computers), we found that the predictor corrector nature of the Hermite integrator produced very poor time performance. 
+
+Secondly, we have not been able to do time step analysis as the Hermite algorithm has a variable time step scheme (see Table~\ref{tab:algorithms}). We can not tweak the performance of error by altering the time step.
+
+The results are given in Figure~\ref{fig:Hermite_runtime} and Figure~\ref{fig:Hermite_dE}
+
+
+   \begin{figure}
+   \centering
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_Hermite_runtime_log.png}
+      \caption{Log-log plot of the wall-clock time as a function of both N and integration 
                end time for Hermite.
               }
          \label{fig:Hermite_runtime}
@@ -147,20 +204,22 @@ cluster size r increases if particles move further away.
    
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{../GravitationalDynamics/plots/CA_GD_TLRH_s1603221_SS_s1617451_Hermite_dE.png}
-      \caption{Relative energy error as a function of both N and integration 
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_Hermite_dE_log.png}
+      \caption{Log-log plot of the relative energy error (absolute value) as a function of both N and integration 
                end time for Hermite.
               }
          \label{fig:Hermite_dE}
    \end{figure}
 
-\section{Huayno Algorithm}
-  \citep{2012NewA...17..711P}
+\section{Huayno Algorithm} \label{sec:Huayno}
+In this section the Huayno algorithm will be reviewed. Our methods and analysis is similar as described in Section~\ref{sec:BHTree} for the BHTree save for one noticeable difference. Here, we have not been able to do time step analysis as the Huayno algorithm has an unknown time step scheme (see Table~\ref{tab:algorithms}). We can not tweak the performance of error by altering the time step.
+
+The results are given in Figure~\ref{fig:Huayno_runtime} and Figure~\ref{fig:Huayno_dE}
   
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{../GravitationalDynamics/plots/CA_GD_TLRH_s1603221_SS_s1617451_Huayno_runtime.png}
-      \caption{Wall-clock time as a function of both N and integration 
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_Huayno_runtime_log.png}
+      \caption{Log-log plot of the wall-clock time as a function of both N and integration 
                end time for Huayno.
               }
          \label{fig:Huayno_runtime}
@@ -168,269 +227,40 @@ cluster size r increases if particles move further away.
    
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{../GravitationalDynamics/plots/CA_GD_TLRH_s1603221_SS_s1617451_Huayno_dE.png}
-      \caption{Relative energy error as a function of both N and integration 
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_Huayno_dE_log.png}
+      \caption{Log-log plot of the relative energy error (absolute value) as a function of both N and integration 
                end time for Huayno.
               }
          \label{fig:Huayno_dE}
    \end{figure}
+   
 
 
 \section{Bound Cluster Mass}
-  In this section we discuss two different methods used to determine whether
-  a star is bound or unbound by the gravitational forces of the other stars in the 
-  galaxy working on it. Moreover, we discuss the differences between both
-  algorithms and we conclude that the built-in is better suited for our needs.
+In this section we discuss two different methods used to determine whether a star is bound or unbound by the gravitational forces of the other stars in the galaxy working on it. Moreover, we discuss the differences between both algorithms and we conclude that the built-in is better suited for our needs.
+
+On one hand, AMUSE has a built-in method \citep{1998ApJ...498..137E}
+
+On the other hand, we have written our own routine to calculate the bound mass. A vital assumption is that when the kinetic energy $E_k$ of a star is greater than the potential energy $E_pot$, the star is unbound. Conversely, the star is unbound.
   
-  On one hand, AMUSE has a built-in method \citep{1998ApJ...498..137E}
-  
-  On the other hand, we have written our own routine to calculate the bound mass.
-  A vital assumption is that when the kinetic energy $E_k$ of a star is greater than the potential
-  energy $E_pot$, the star is unbound. Conversely, the star is unbound.
+\section{Galaxy in Orbit around Black Hole} \label{sec:orbitBH_MW_Mass}
+Here we adopt N = 1024 and we use the BHTree algorithm because it has the best time complexity. We do not adjust the default time step, as discussed in Section~\ref{sec:BHTree}. Our analysis consists of the following four parts. 
 
+Firstly, we define a function to calculate the total bound mass of the cluster. In this case the cluster is in a system without a black hole, i.e. the function determines an intrinsic property of the cluster itself. 
 
-%%                                     Two column figure (place early!)
-%%______________________________________________ Gamma_1 (lg rho, lg e)
-%   \begin{figure*}
-%   \centering
-%   %%%\includegraphics{empty.eps}
-%   %%%\includegraphics{empty.eps}
-%   %%%\includegraphics{empty.eps}
-%   \caption{Adiabatic exponent $\Gamma_1$.
-%               $\Gamma_1$ is plotted as a function of
-%               $\lg$ internal energy $\mathrm{[erg\,g^{-1}]}$ and $\lg$
-%               density $\mathrm{[g\,cm^{-3}]}$.}
-%              \label{FigGam}%
-%    \end{figure*}
-%%
+Secondly, we add a black hole of mass $M = 1.26 \cdot 10^{12}$ M\Sun. Figure~\ref{fig:dvplane} shows the impact parameter $d$ versus the velocity of the cluster when it is closest to the black hole. For this we have assumed the cluster to be a point mass, since we are only interested in the behaviour of the center of mass of the cluster. We consider the cluster (point mass) bound if its velocity is smaller than the escape velocity $v_{\rm esc}$ given by \begin{eqnarray} v_{\rm esc} &= \sqrt{\frac{2 G M}{d}} \label{eq:vesc} \end{eqnarray} where $G$ is the gravitational constant (in SI), $M$ is the mass of the Black Hole and $d$ is the impact parameter.
 
-%   Baker (\cite{baker}) investigates the stability of thin layers in
-%   self-gravitating,
-%   spherical gas clouds with the following properties:
-%   \begin{itemize}
-%      \item hydrostatic equilibrium,
-%      \item thermal equilibrium,
-%      \item energy transport by grey radiation diffusion.
-%   \end{itemize}
-%   For the one-zone-model Baker obtains necessary conditions
-%   for dynamical, secular and vibrational (or pulsational)
-%   stability (Eqs.\ (34a,\,b,\,c) in Baker \cite{baker}). Using Baker's
-%   notation:
-%   \[
-%      \begin{array}{lp{0.8\linewidth}}
-%         M_{r}  & mass internal to the radius $r$     \\
-%         m               & mass of the zone                    \\
-%         r_0             & unperturbed zone radius             \\
-%         \rho_0          & unperturbed density in the zone     \\
-%         T_0             & unperturbed temperature in the zone \\
-%         L_{r0}          & unperturbed luminosity              \\
-%         E_{\mathrm{th}} & thermal energy of the zone
-%      \end{array}
-%   \]
-%\noindent
-%   and with the definitions of the \emph{local cooling time\/}
-%   (see Fig.~\ref{FigGam})
-%   \begin{equation}
-%      \tau_{\mathrm{co}} = \frac{E_{\mathrm{th}}}{L_{r0}} \,,
-%   \end{equation}
-%   and the \emph{local free-fall time}
-%   \begin{equation}
-%      \tau_{\mathrm{ff}} =
-%         \sqrt{ \frac{3 \pi}{32 G} \frac{4\pi r_0^3}{3 M_{\mathrm{r}}}
-%}\,,
-%   \end{equation}
-%   Baker's $K$ and $\sigma_0$ have the following form:
-%   \begin{eqnarray}
-%      \sigma_0 & = & \frac{\pi}{\sqrt{8}}
-%                     \frac{1}{ \tau_{\mathrm{ff}}} \\
-%      K        & = & \frac{\sqrt{32}}{\pi} \frac{1}{\delta}
-%                        \frac{ \tau_{\mathrm{ff}} }
-%                             { \tau_{\mathrm{co}} }\,;
-%   \end{eqnarray}
-%   where $ E_{\mathrm{th}} \approx m (P_0/{\rho_0})$ has been used and
-%   \begin{equation}
-%   \begin{array}{l}
-%      \delta = - \left(
-%                    \frac{ \partial \ln \rho }{ \partial \ln T }
-%                 \right)_P \\
-%      e=mc^2
-%   \end{array}
-%   \end{equation}
-%   is a thermodynamical quantity which is of order $1$ and equal to $1$
-%   for nonreacting mixtures of classical perfect gases. The physical
-%   meaning of $ \sigma_0 $ and $K$ is clearly visible in the equations
-%   above. $\sigma_0$ represents a frequency of the order one per
-%   free-fall time. $K$ is proportional to the ratio of the free-fall
-%   time and the cooling time. Substituting into Baker's criteria, using
-%   thermodynamic identities and definitions of thermodynamic quantities,
-%   \begin{displaymath}
-%      \Gamma_1      = \left( \frac{ \partial \ln P}{ \partial\ln \rho}
-%                           \right)_{S}    \, , \;
-%      \chi^{}_\rho  = \left( \frac{ \partial \ln P}{ \partial\ln \rho}
-%                           \right)_{T}    \, , \;
-%      \kappa^{}_{P} = \left( \frac{ \partial \ln \kappa}{ \partial\ln P}
-%                           \right)_{T}
-%   \end{displaymath}
-%   \begin{displaymath}
-%      \nabla_{\mathrm{ad}} = \left( \frac{ \partial \ln T}
-%                             { \partial\ln P} \right)_{S} \, , \;
-%      \chi^{}_T       = \left( \frac{ \partial \ln P}
-%                             { \partial\ln T} \right)_{\rho} \, , \;
-%      \kappa^{}_{T}   = \left( \frac{ \partial \ln \kappa}
-%                             { \partial\ln T} \right)_{T}
-%   \end{displaymath}
-%   one obtains, after some pages of algebra, the conditions for
-%   \emph{stability\/} given
-%   below:
-%   \begin{eqnarray}
-%      \frac{\pi^2}{8} \frac{1}{\tau_{\mathrm{ff}}^2}
-%                ( 3 \Gamma_1 - 4 )
-%         & > & 0 \label{ZSDynSta} \\
-%      \frac{\pi^2}{\tau_{\mathrm{co}}
-%                   \tau_{\mathrm{ff}}^2}
-%                   \Gamma_1 \nabla_{\mathrm{ad}}
-%                   \left[ \frac{ 1- 3/4 \chi^{}_\rho }{ \chi^{}_T }
-%                          ( \kappa^{}_T - 4 )
-%                        + \kappa^{}_P + 1
-%                   \right]
-%        & > & 0 \label{ZSSecSta} \\
-%     \frac{\pi^2}{4} \frac{3}{\tau_{ \mathrm{co} }
-%                              \tau_{ \mathrm{ff} }^2
-%                             }
-%         \Gamma_1^2 \, \nabla_{\mathrm{ad}} \left[
-%                                   4 \nabla_{\mathrm{ad}}
-%                                   - ( \nabla_{\mathrm{ad}} \kappa^{}_T
-%                                     + \kappa^{}_P
-%                                     )
-%                                   - \frac{4}{3 \Gamma_1}
-%                                \right]
-%        & > & 0   \label{ZSVibSta}
-%   \end{eqnarray}
-%%
-%   For a physical discussion of the stability criteria see Baker
-%   (\cite{baker}) or Cox (\cite{cox}).
-%
-%   We observe that these criteria for dynamical, secular and
-%   vibrational stability, respectively, can be factorized into
-%   \begin{enumerate}
-%      \item a factor containing local timescales only,
-%      \item a factor containing only constitutive relations and
-%         their derivatives.
-%   \end{enumerate}
-%   The first factors, depending on only timescales, are positive
-%   by definition. The signs of the left hand sides of the
-%   inequalities~(\ref{ZSDynSta}), (\ref{ZSSecSta}) and (\ref{ZSVibSta})
-%   therefore depend exclusively on the second factors containing
-%   the constitutive relations. Since they depend only
-%   on state variables, the stability criteria themselves are \emph{
-%   functions of the thermodynamic state in the local zone}. The
-%   one-zone stability can therefore be determined
-%   from a simple equation of state, given for example, as a function
-%   of density and
-%   temperature. Once the microphysics, i.e.\ the thermodynamics
-%   and opacities (see Table~\ref{KapSou}), are specified (in practice
-%   by specifying a chemical composition) the one-zone stability can
-%   be inferred if the thermodynamic state is specified.
-%   The zone -- or in
-%   other words the layer -- will be stable or unstable in
-%   whatever object it is imbedded as long as it satisfies the
-%   one-zone-model assumptions. Only the specific growth rates
-%   (depending upon the time scales) will be different for layers
-%   in different objects.
+Moreover, we adopt a circular orbit around the black hole at a distance $R$ = REPLACE. We investigate the values of the cluster size $r$ over the distance to the Black Hole, $r/R$ to see when the cluster is bound or unbound. 
 
-%%__________________________________________________ One column table
-%   \begin{table}
-%      \caption[]{Opacity sources.}
-%         \label{KapSou}
-%     $$ 
-%         \begin{array}{p{0.5\linewidth}l}
-%            \hline
-%            \noalign{\smallskip}
-%            Source      &  T / {[\mathrm{K}]} \\
-%            \noalign{\smallskip}
-%            \hline
-%            \noalign{\smallskip}
-%            Yorke 1979, Yorke 1980a & \leq 1700^{\mathrm{a}}     \\
-%%           Yorke 1979, Yorke 1980a & \leq 1700             \\
-%            Kr\"ugel 1971           & 1700 \leq T \leq 5000 \\
-%            Cox \& Stewart 1969     & 5000 \leq             \\
-%            \noalign{\smallskip}
-%            \hline
-%         \end{array}
-%     $$ 
-%   \end{table}
-%%
-%   We will now write down the sign (and therefore stability)
-%   determining parts of the left-hand sides of the inequalities
-%   (\ref{ZSDynSta}), (\ref{ZSSecSta}) and (\ref{ZSVibSta}) and thereby
-%   obtain \emph{stability equations of state}.
-%
-%   The sign determining part of inequality~(\ref{ZSDynSta}) is
-%   $3\Gamma_1 - 4$ and it reduces to the
-%   criterion for dynamical stability
-%   \begin{equation}
-%     \Gamma_1 > \frac{4}{3}\,\cdot
-%   \end{equation}
-%   Stability of the thermodynamical equilibrium demands
-%   \begin{equation}
-%      \chi^{}_\rho > 0, \;\;  c_v > 0\, ,
-%   \end{equation}
-%   and
-%   \begin{equation}
-%      \chi^{}_T > 0
-%   \end{equation}
-%   holds for a wide range of physical situations.
-%   With
-%   \begin{eqnarray}
-%      \Gamma_3 - 1 = \frac{P}{\rho T} \frac{\chi^{}_T}{c_v}&>&0\\
-%      \Gamma_1     = \chi_\rho^{} + \chi_T^{} (\Gamma_3 -1)&>&0\\
-%      \nabla_{\mathrm{ad}}  = \frac{\Gamma_3 - 1}{\Gamma_1}         &>&0
-%   \end{eqnarray}
-%   we find the sign determining terms in inequalities~(\ref{ZSSecSta})
-%   and (\ref{ZSVibSta}) respectively and obtain the following form
-%   of the criteria for dynamical, secular and vibrational
-%   \emph{stability}, respectively:
-%   \begin{eqnarray}
-%      3 \Gamma_1 - 4 =: S_{\mathrm{dyn}}      > & 0 & \label{DynSta}  \\
-%%
-%      \frac{ 1- 3/4 \chi^{}_\rho }{ \chi^{}_T } ( \kappa^{}_T - 4 )
-%         + \kappa^{}_P + 1 =: S_{\mathrm{sec}} > & 0 & \label{SecSta} \\
-%%
-%      4 \nabla_{\mathrm{ad}} - (\nabla_{\mathrm{ad}} \kappa^{}_T
-%                             + \kappa^{}_P)
-%                             - \frac{4}{3 \Gamma_1} =: S_{\mathrm{vib}}
-%                                      > & 0\,.& \label{VibSta}
-%   \end{eqnarray}
-%   The constitutive relations are to be evaluated for the
-%   unperturbed thermodynamic state (say $(\rho_0, T_0)$) of the zone.
-%   We see that the one-zone stability of the layer depends only on
-%   the constitutive relations $\Gamma_1$,
-%   $\nabla_{\mathrm{ad}}$, $\chi_T^{},\,\chi_\rho^{}$,
-%   $\kappa_P^{},\,\kappa_T^{}$.
-%   These depend only on the unperturbed
-%   thermodynamical state of the layer. Therefore the above relations
-%   define the one-zone-stability equations of state
-%   $S_{\mathrm{dyn}},\,S_{\mathrm{sec}}$
-%   and $S_{\mathrm{vib}}$. See Fig.~\ref{FigVibStab} for a picture of
-%   $S_{\mathrm{vib}}$. Regions of secular instability are
-%   listed in Table~1.
-%
-%%
-%%                                                One column figure
-%%----------------------------------------------------------- S_vib
-%   \begin{figure}
-%   \centering
-%   %%%\includegraphics[width=3cm]{empty.eps}
-%      \caption{Vibrational stability equation of state
-%               $S_{\mathrm{vib}}(\lg e, \lg \rho)$.
-%               $>0$ means vibrational stability.
-%              }
-%         \label{FigVibStab}
-%   \end{figure}
-%%
-%%______________________________________________________________
-%
-
+Finally, we simulate around the bound-unbound border in the $d$,$v$-plane to obtain the mass of the post-encounter cluster and, using the Kepler package \citep{REPLACE} to calculate the orbital parameters.
+   \begin{figure}
+   \centering
+   \includegraphics[width=\hsize]{img/dv_plot.png}
+      \caption{Plot of the $d$,$v$-plane indicating when the cluster (simulated as a point mass) becomes bound or unbound.
+      		   Red dots indicate an unbound situation, while blue dots indicate a bound situation.
+              }
+         \label{fig:dvplane}
+   \end{figure}
 
 \section{Conclusions}
 
@@ -450,569 +280,5 @@ cluster size r increases if particles move further away.
 
 \bibliographystyle{aa} 
 %\setlength{\bibsep}{0pt} % Remove whitespace in bibliography.
-\bibliography{CA_GD_TLRH_s1603221_SS_s1617451_report} 
-
-%\begin{thebibliography}{}
-%
-%  \bibitem[1966]{baker} Baker, N. 1966,
-%      in Stellar Evolution,
-%      ed.\ R. F. Stein,\& A. G. W. Cameron
-%      (Plenum, New York) 333
-%
-%   \bibitem[1988]{balluch} Balluch, M. 1988,
-%      A\&A, 200, 58
-%
-%   \bibitem[1980]{cox} Cox, J. P. 1980,
-%      Theory of Stellar Pulsation
-%      (Princeton University Press, Princeton) 165
-%
-%   \bibitem[1969]{cox69} Cox, A. N.,\& Stewart, J. N. 1969,
-%      Academia Nauk, Scientific Information 15, 1
-%
-%   \bibitem[1980]{mizuno} Mizuno H. 1980,
-%      Prog. Theor. Phys., 64, 544
-%   
-%   \bibitem[1987]{tscharnuter} Tscharnuter W. M. 1987,
-%      A\&A, 188, 55
-%  
-%   \bibitem[1992]{terlevich} Terlevich, R. 1992, in ASP Conf. Ser. 31, 
-%      Relationships between Active Galactic Nuclei and Starburst Galaxies, 
-%      ed. A. V. Filippenko, 13
-%
-%   \bibitem[1980a]{yorke80a} Yorke, H. W. 1980a,
-%      A\&A, 86, 286
-%
-%   \bibitem[1997]{zheng} Zheng, W., Davidsen, A. F., Tytler, D. \& Kriss, G. A.
-%      1997, preprint
-%\end{thebibliography}
-
+\bibliography{CA_GD_TLRH_s1603221_SS_s1617451_report_aa} 
 \end{document}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Examples for figures using graphicx
-A guide "Using Imported Graphics in LaTeX2e"  (Keith Reckdahl)
-is available on a lot of LaTeX public servers or ctan mirrors.
-The file is : epslatex.pdf 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%_____________________________________________________________
-%                 A figure as large as the width of the column
-%-------------------------------------------------------------
-   \begin{figure}
-   \centering
-   \includegraphics[width=\hsize]{empty.eps}
-      \caption{Vibrational stability equation of state
-               $S_{\mathrm{vib}}(\lg e, \lg \rho)$.
-               $>0$ means vibrational stability.
-              }
-         \label{FigVibStab}
-   \end{figure}
-%
-%_____________________________________________________________
-%                                    One column rotated figure
-%-------------------------------------------------------------
-   \begin{figure}
-   \centering
-   \includegraphics[angle=-90,width=3cm]{empty.eps}
-      \caption{Vibrational stability equation of state
-               $S_{\mathrm{vib}}(\lg e, \lg \rho)$.
-               $>0$ means vibrational stability.
-              }
-         \label{FigVibStab}
-   \end{figure}
-%
-%_____________________________________________________________
-%                        Figure with caption on the right side 
-%-------------------------------------------------------------
-   \begin{figure}
-   \sidecaption
-   \includegraphics[width=3cm]{empty.eps}
-      \caption{Vibrational stability equation of state
-               $S_{\mathrm{vib}}(\lg e, \lg \rho)$.
-               $>0$ means vibrational stability.
-              }
-         \label{FigVibStab}
-   \end{figure}
-%
-%_____________________________________________________________
-%
-%_____________________________________________________________
-%                                Figure with a new BoundingBox 
-%-------------------------------------------------------------
-   \begin{figure}
-   \centering
-   \includegraphics[bb=10 20 100 300,width=3cm,clip]{empty.eps}
-      \caption{Vibrational stability equation of state
-               $S_{\mathrm{vib}}(\lg e, \lg \rho)$.
-               $>0$ means vibrational stability.
-              }
-         \label{FigVibStab}
-   \end{figure}
-%
-%_____________________________________________________________
-%
-%_____________________________________________________________
-%                                      The "resizebox" command 
-%-------------------------------------------------------------
-   \begin{figure}
-   \resizebox{\hsize}{!}
-            {\includegraphics[bb=10 20 100 300,clip]{empty.eps}
-      \caption{Vibrational stability equation of state
-               $S_{\mathrm{vib}}(\lg e, \lg \rho)$.
-               $>0$ means vibrational stability.
-              }
-         \label{FigVibStab}
-   \end{figure}
-%
-%______________________________________________________________
-%
-%_____________________________________________________________
-%                                             Two column Figure 
-%-------------------------------------------------------------
-   \begin{figure*}
-   \resizebox{\hsize}{!}
-            {\includegraphics[bb=10 20 100 300,clip]{empty.eps}
-      \caption{Vibrational stability equation of state
-               $S_{\mathrm{vib}}(\lg e, \lg \rho)$.
-               $>0$ means vibrational stability.
-              }
-         \label{FigVibStab}
-   \end{figure*}
-%
-%______________________________________________________________
-%
-%_____________________________________________________________
-%                                             Simple A&A Table
-%_____________________________________________________________
-%
-\begin{table}
-\caption{Nonlinear Model Results}             % title of Table
-\label{table:1}      % is used to refer this table in the text
-\centering                          % used for centering table
-\begin{tabular}{c c c c}        % centered columns (4 columns)
-\hline\hline                 % inserts double horizontal lines
-HJD & $E$ & Method\#2 & Method\#3 \\    % table heading 
-\hline                        % inserts single horizontal line
-   1 & 50 & $-837$ & 970 \\      % inserting body of the table
-   2 & 47 & 877    & 230 \\
-   3 & 31 & 25     & 415 \\
-   4 & 35 & 144    & 2356 \\
-   5 & 45 & 300    & 556 \\ 
-\hline                                   %inserts single line
-\end{tabular}
-\end{table}
-%
-%_____________________________________________________________
-%                                             Two column Table 
-%_____________________________________________________________
-%
-\begin{table*}
-\caption{Nonlinear Model Results}             
-\label{table:1}      
-\centering          
-\begin{tabular}{c c c c l l l }     % 7 columns 
-\hline\hline       
-                      % To combine 4 columns into a single one 
-HJD & $E$ & Method\#2 & \multicolumn{4}{c}{Method\#3}\\ 
-\hline                    
-   1 & 50 & $-837$ & 970 & 65 & 67 & 78\\  
-   2 & 47 & 877    & 230 & 567& 55 & 78\\
-   3 & 31 & 25     & 415 & 567& 55 & 78\\
-   4 & 35 & 144    & 2356& 567& 55 & 78 \\
-   5 & 45 & 300    & 556 & 567& 55 & 78\\
-\hline                  
-\end{tabular}
-\end{table*}
-%
-%-------------------------------------------------------------
-%                                          Table with notes 
-%-------------------------------------------------------------
-%
-% A single note
-\begin{table}
-\caption{\label{t7}Spectral types and photometry for stars in the
-  region.}
-\centering
-\begin{tabular}{lccc}
-\hline\hline
-Star&Spectral type&RA(J2000)&Dec(J2000)\\
-\hline
-69           &B1\,V     &09 15 54.046 & $-$50 00 26.67\\
-49           &B0.7\,V   &*09 15 54.570& $-$50 00 03.90\\
-LS~1267~(86) &O8\,V     &09 15 52.787&11.07\\
-24.6         &7.58      &1.37 &0.20\\
-\hline
-LS~1262      &B0\,V     &09 15 05.17&11.17\\
-MO 2-119     &B0.5\,V   &09 15 33.7 &11.74\\
-LS~1269      &O8.5\,V   &09 15 56.60&10.85\\
-\hline
-\end{tabular}
-\tablefoot{The top panel shows likely members of Pismis~11. The second
-panel contains likely members of Alicante~5. The bottom panel
-displays stars outside the clusters.}
-\end{table}
-%
-% More notes
-%
-\begin{table}
-\caption{\label{t7}Spectral types and photometry for stars in the
-  region.}
-\centering
-\begin{tabular}{lccc}
-\hline\hline
-Star&Spectral type&RA(J2000)&Dec(J2000)\\
-\hline
-69           &B1\,V     &09 15 54.046 & $-$50 00 26.67\\
-49           &B0.7\,V   &*09 15 54.570& $-$50 00 03.90\\
-LS~1267~(86) &O8\,V     &09 15 52.787&11.07\tablefootmark{a}\\
-24.6         &7.58\tablefootmark{1}&1.37\tablefootmark{a}   &0.20\tablefootmark{a}\\
-\hline
-LS~1262      &B0\,V     &09 15 05.17&11.17\tablefootmark{b}\\
-MO 2-119     &B0.5\,V   &09 15 33.7 &11.74\tablefootmark{c}\\
-LS~1269      &O8.5\,V   &09 15 56.60&10.85\tablefootmark{d}\\
-\hline
-\end{tabular}
-\tablefoot{The top panel shows likely members of Pismis~11. The second
-panel contains likely members of Alicante~5. The bottom panel
-displays stars outside the clusters.\\
-\tablefoottext{a}{Photometry for MF13, LS~1267 and HD~80077 from
-Dupont et al.}
-\tablefoottext{b}{Photometry for LS~1262, LS~1269 from
-Durand et al.}
-\tablefoottext{c}{Photometry for MO2-119 from
-Mathieu et al.}
-}
-\end{table}
-%
-%-------------------------------------------------------------
-%                                       Table with references 
-%-------------------------------------------------------------
-%
-\begin{table*}[h]
- \caption[]{\label{nearbylistaa2}List of nearby SNe used in this work.}
-\begin{tabular}{lccc}
- \hline \hline
-  SN name &
-  Epoch &
- Bands &
-  References \\
- &
-  (with respect to $B$ maximum) &
- &
- \\ \hline
-1981B   & 0 & {\it UBV} & 1\\
-1986G   &  $-$3, $-$1, 0, 1, 2 & {\it BV}  & 2\\
-1989B   & $-$5, $-$1, 0, 3, 5 & {\it UBVRI}  & 3, 4\\
-1990N   & 2, 7 & {\it UBVRI}  & 5\\
-1991M   & 3 & {\it VRI}  & 6\\
-\hline
-\noalign{\smallskip}
-\multicolumn{4}{c}{ SNe 91bg-like} \\
-\noalign{\smallskip}
-\hline
-1991bg   & 1, 2 & {\it BVRI}  & 7\\
-1999by   & $-$5, $-$4, $-$3, 3, 4, 5 & {\it UBVRI}  & 8\\
-\hline
-\noalign{\smallskip}
-\multicolumn{4}{c}{ SNe 91T-like} \\
-\noalign{\smallskip}
-\hline
-1991T   & $-$3, 0 & {\it UBVRI}  &  9, 10\\
-2000cx  & $-$3, $-$2, 0, 1, 5 & {\it UBVRI}  & 11\\ %
-\hline
-\end{tabular}
-\tablebib{(1)~\citet{branch83};
-(2) \citet{phillips87}; (3) \citet{barbon90}; (4) \citet{wells94};
-(5) \citet{mazzali93}; (6) \citet{gomez98}; (7) \citet{kirshner93};
-(8) \citet{patat96}; (9) \citet{salvo01}; (10) \citet{branch03};
-(11) \citet{jha99}.
-}
-\end{table}
-%_____________________________________________________________
-%                      A rotated Two column Table in landscape  
-%-------------------------------------------------------------
-\begin{sidewaystable*}
-\caption{Summary for ISOCAM sources with mid-IR excess 
-(YSO candidates).}\label{YSOtable}
-\centering
-\begin{tabular}{crrlcl} 
-\hline\hline             
-ISO-L1551 & $F_{6.7}$~[mJy] & $\alpha_{6.7-14.3}$ 
-& YSO type$^{d}$ & Status & Comments\\
-\hline
-  \multicolumn{6}{c}{\it New YSO candidates}\\ % To combine 6 columns into a single one
-\hline
-  1 & 1.56 $\pm$ 0.47 & --    & Class II$^{c}$ & New & Mid\\
-  2 & 0.79:           & 0.97: & Class II ?     & New & \\
-  3 & 4.95 $\pm$ 0.68 & 3.18  & Class II / III & New & \\
-  5 & 1.44 $\pm$ 0.33 & 1.88  & Class II       & New & \\
-\hline
-  \multicolumn{6}{c}{\it Previously known YSOs} \\
-\hline
-  61 & 0.89 $\pm$ 0.58 & 1.77 & Class I & \object{HH 30} & Circumstellar disk\\
-  96 & 38.34 $\pm$ 0.71 & 37.5& Class II& MHO 5          & Spectral type\\
-\hline
-\end{tabular}
-\end{sidewaystable*}
-%_____________________________________________________________
-%                      A rotated One column Table in landscape  
-%-------------------------------------------------------------
-\begin{sidewaystable}
-\caption{Summary for ISOCAM sources with mid-IR excess 
-(YSO candidates).}\label{YSOtable}
-\centering
-\begin{tabular}{crrlcl} 
-\hline\hline             
-ISO-L1551 & $F_{6.7}$~[mJy] & $\alpha_{6.7-14.3}$ 
-& YSO type$^{d}$ & Status & Comments\\
-\hline
-  \multicolumn{6}{c}{\it New YSO candidates}\\ % To combine 6 columns into a single one
-\hline
-  1 & 1.56 $\pm$ 0.47 & --    & Class II$^{c}$ & New & Mid\\
-  2 & 0.79:           & 0.97: & Class II ?     & New & \\
-  3 & 4.95 $\pm$ 0.68 & 3.18  & Class II / III & New & \\
-  5 & 1.44 $\pm$ 0.33 & 1.88  & Class II       & New & \\
-\hline
-  \multicolumn{6}{c}{\it Previously known YSOs} \\
-\hline
-  61 & 0.89 $\pm$ 0.58 & 1.77 & Class I & \object{HH 30} & Circumstellar disk\\
-  96 & 38.34 $\pm$ 0.71 & 37.5& Class II& MHO 5          & Spectral type\\
-\hline
-\end{tabular}
-\end{sidewaystable}
-%
-%_____________________________________________________________
-%                              Table longer than a single page  
-%-------------------------------------------------------------
-% All long tables will be placed automatically at the end, after 
-%                                        \end{thebibliography}
-%
-\begin{longtab}
-\begin{longtable}{lllrrr}
-\caption{\label{kstars} Sample stars with absolute magnitude}\\
-\hline\hline
-Catalogue& $M_{V}$ & Spectral & Distance & Mode & Count Rate \\
-\hline
-\endfirsthead
-\caption{continued.}\\
-\hline\hline
-Catalogue& $M_{V}$ & Spectral & Distance & Mode & Count Rate \\
-\hline
-\endhead
-\hline
-\endfoot
-%%
-Gl 33    & 6.37 & K2 V & 7.46 & S & 0.043170\\
-Gl 66AB  & 6.26 & K2 V & 8.15 & S & 0.260478\\
-Gl 68    & 5.87 & K1 V & 7.47 & P & 0.026610\\
-         &      &      &      & H & 0.008686\\
-Gl 86 
-\footnote{Source not included in the HRI catalog. See Sect.~5.4.2 for details.}
-         & 5.92 & K0 V & 10.91& S & 0.058230\\
-\end{longtable}
-\end{longtab}
-%
-%_____________________________________________________________
-%                              Table longer than a single page
-%                                             and in landscape 
-%  In the preamble, use:       \usepackage{lscape}
-%-------------------------------------------------------------
-% All long tables will be placed automatically at the end, after
-%                                        \end{thebibliography}
-%
-\begin{longtab}
-\begin{landscape}
-\begin{longtable}{lllrrr}
-\caption{\label{kstars} Sample stars with absolute magnitude}\\
-\hline\hline
-Catalogue& $M_{V}$ & Spectral & Distance & Mode & Count Rate \\
-\hline
-\endfirsthead
-\caption{continued.}\\
-\hline\hline
-Catalogue& $M_{V}$ & Spectral & Distance & Mode & Count Rate \\
-\hline
-\endhead
-\hline
-\endfoot
-%%
-Gl 33    & 6.37 & K2 V & 7.46 & S & 0.043170\\
-Gl 66AB  & 6.26 & K2 V & 8.15 & S & 0.260478\\
-Gl 68    & 5.87 & K1 V & 7.47 & P & 0.026610\\
-         &      &      &      & H & 0.008686\\
-Gl 86
-\footnote{Source not included in the HRI catalog. See Sect.~5.4.2 for details.}
-         & 5.92 & K0 V & 10.91& S & 0.058230\\
-\end{longtable}
-\end{landscape}
-\end{longtab}
-%
-% Online Material
-%_____________________________________________________________
-%        Online appendices have to be placed at the end, after
-%                                        \end{thebibliography}
-%-------------------------------------------------------------
-\end{thebibliography}
-
-\Online
-
-\begin{appendix} %First online appendix
-\section{Background galaxy number counts and shear noise-levels}
-Because the optical images used in this analysis...
-
-\begin{figure*}
-\centering
-\includegraphics[width=16.4cm,clip]{1787f24.ps}
-\caption{Plotted above...}
-\label{appfig}
-\end{figure*}
-
-Because the optical images...
-\end{appendix}
-
-\begin{appendix} %Second online appendix
-These studies, however, have faced...
-\end{appendix}
-
-\end{document}
-%
-%_____________________________________________________________
-%        Some tables or figures are in the printed version and
-%                      some are only in the electronic version
-%-------------------------------------------------------------
-%
-% Leave all the tables or figures in the text, at their right place 
-% and use the commands \onlfig{} and \onltab{}. These elements
-% will be automatically placed at the end, in the section
-% Online material.
-
-\documentclass{aa}
-...
-\begin{document}
-text of the paper...
-\begin{figure*}%f1
-\includegraphics[width=10.9cm]{1787f01.eps}
-\caption{Shown in greyscale is a...}
-\label{cl12301}}
-\end{figure*}
-...
-from the intrinsic ellipticity distribution.
-% Figure 2 available electronically only
-\onlfig{
-\begin{figure*}%f2
-\includegraphics[width=11.6cm]{1787f02.eps}
-\caption {Shown in greyscale...}
-\label{cl1018}
-\end{figure*}
-}
-
-% Figure 3 available electronically only
-\onlfig{
-\begin{figure*}%f3
-\includegraphics[width=11.2cm]{1787f03.eps}
-\caption{Shown in panels...}
-\label{cl1059}
-\end{figure*}
-}
-
-\begin{figure*}%f4
-\includegraphics[width=10.9cm]{1787f04.eps}
-\caption{Shown in greyscale is...}
-\label{cl1232}}
-\end{figure*}
-
-\begin{table}%t1
-\caption{Complexes characterisation.}\label{starbursts}
-\centering
-\begin{tabular}{lccc}
-\hline \hline
-Complex & $F_{60}$ & 8.6 &  No. of  \\
-...
-\hline
-\end{tabular}
-\end{table}
-The second method produces...
-
-% Figure 5 available electronically only
-\onlfig{
-\begin{figure*}%f5
-\includegraphics[width=11.2cm]{1787f05.eps}
-\caption{Shown in panels...}
-\label{cl1238}}
-\end{figure*}
-}
-
-As can be seen, in general the deeper...
-% Table 2 available electronically only
-\onltab{
-\begin{table*}%t2
-\caption{List of the LMC stellar complexes...}\label{Properties}
-\centering
-\begin{tabular}{lccccccccc}
-\hline  \hline
-Stellar & RA & Dec & ...
-...
-\hline
-\end{tabular}
-\end{table*}
-}
-
-% Table 3 available electronically only
-\onltab{
-\begin{table*}%t3
-\caption{List of the derived...}\label{IrasFluxes}
-\centering
-\begin{tabular}{lcccccccccc}
-\hline \hline
-Stellar & $f12$ & $L12$ &...
-...
-\hline
-\end{tabular}
-\end{table*}
-}
-%
-%-------------------------------------------------------------
-%     For the online material, table longer than a single page
-%                 In the preamble for landscape case, use : 
-%                                          \usepackage{lscape}
-%-------------------------------------------------------------
-\documentclass{aa}
-\usepackage[varg]{txfonts}
-\usepackage{graphicx}
-\usepackage{lscape}
-
-\begin{document}
-text of the paper
-% Table will be print automatically at the end, in the section Online material.
-\onllongtab{
-\begin{longtable}{lrcrrrrrrrrl}
-\caption{Line data and abundances ...}\\
-\hline
-\hline
-Def & mol & Ion & $\lambda$ & $\chi$ & $\log gf$ & N & e &  rad & $\delta$ & $\delta$ 
-red & References \\
-\hline
-\endfirsthead
-\caption{Continued.} \\
-\hline
-Def & mol & Ion & $\lambda$ & $\chi$ & $\log gf$ & B & C &  rad & $\delta$ & $\delta$ 
-red & References \\
-\hline
-\endhead
-\hline
-\endfoot
-\hline
-\endlastfoot
-A & CH & 1 &3638 & 0.002 & $-$2.551 &  &  &  & $-$150 & 150 &  Jorgensen et al. (1996) \\                    
-\end{longtable}
-}% End onllongtab
-
-% Or for landscape, large table:
-
-\onllongtab{
-\begin{landscape}
-\begin{longtable}{lrcrrrrrrrrl}
-...
-\end{longtable}
-\end{landscape}
-}% End onllongtab
