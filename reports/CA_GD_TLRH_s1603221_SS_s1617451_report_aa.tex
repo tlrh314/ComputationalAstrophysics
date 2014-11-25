@@ -60,19 +60,20 @@ citecolor=black}
    {To investigate the computational nature of different N-Body algorithms
    available in the AMUSE framework, to model interactions that occur 
    when galaxies collide in orde to obtain the bound particles and the total
-   bound mass in the galaxy.}
+   post-encounter bound mass in the galaxy.}
   % aims heading (mandatory)
-   {To investigate both time-complexity and relative energy error for different 
-   N-Body algorithms, simulating Ultra Compact Dwarfs galaxies in orbit around
-   a Black Hole or other Galaxies such as the Milky Way, studying the bound mass
-   of a Dwarf Galaxy.}
+   {To investigate the performance of different 
+   N-Body algorithms, to simulate an Ultra Compact Dwarfs galaxies in an orbit around
+   a Black Hole (possibly other Galaxies such as the Milky Way).}
   % methods heading (mandatory)
-   {REPLACE.}
+   {We have used a three different N-Body integrators to calculate the gravity in a galaxy:
+   a predictor corrector algorithm (Hermite), a direct approx. symplectic algorithm (Huayno),
+   and a tree based algorithm (BHTree).}
   % results heading (mandatory)
    {It is shown that the BHTree algorithm has the most favoured time complexity
    of $O(n \log n)$ as compared to $O(n^2)$ for Huayno and Hermite, the
-   relative energy error can be reduced at higher cost of calculations by decreasing
-   the time step. Having analysed different N-Body algorithm, the BHTree algorithm 
+   relative energy error will increase as the time step of the BHTree is decreased.
+   Having analysed different N-Body algorithm, the BHTree algorithm 
    is chosen to simulate a dwarf galaxy orbiting a black hole.}
   % conclusions heading (optional), leave it empty if necessary 
    {}
@@ -97,9 +98,8 @@ This paper uses the AMUSE (Astrophysical Multipurpose Software Environment) fram
 \caption{Properties of the three chosen N-Body integrators \citep{AMUSEdocumentation}}             
 \label{tab:algorithms}      
 \centering          
-\begin{tabular}{c c c c l l l }     % 7 columns 
+\begin{tabular}{c c c c l l l }
 \hline\hline       
-                      % To combine 4 columns into a single one 
 Algorithm & Approximation Scheme & Time step Scheme & Time Complexity \\ 
 \hline                    
    BHTree & Tree & Shared / Fixed & $O(n \log n)$ \\
@@ -142,7 +142,7 @@ As the relative energy error for the BHTree is in the order of $10^{-2}$ and the
   
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_BHTree_runtime_log.png}
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_BHTree_runtime_log_plus_O.png}
       \caption{Log-log plot of the wall-clock time as a function of both N and integration 
                end time for BHTree. Different colours indicate different end times $t_{\rm end}$ of the integration.
               }
@@ -218,7 +218,7 @@ The results are given in Figure~\ref{fig:Huayno_runtime} and Figure~\ref{fig:Hua
   
    \begin{figure}
    \centering
-   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_Huayno_runtime_log.png}
+   \includegraphics[width=\hsize]{img/CA_GD_TLRH_s1603221_SS_s1617451_Huayno_runtime_log_plus_O.png}
       \caption{Log-log plot of the wall-clock time as a function of both N and integration 
                end time for Huayno.
               }
@@ -236,12 +236,12 @@ The results are given in Figure~\ref{fig:Huayno_runtime} and Figure~\ref{fig:Hua
    
 
 
-\section{Bound Cluster Mass}
+\section{Bound Cluster Mass} \label{sec:BoundClusterMass}
 In this section we discuss two different methods used to determine whether a star is bound or unbound by the gravitational forces of the other stars in the galaxy working on it. Moreover, we discuss the differences between both algorithms and we conclude that the built-in is better suited for our needs.
 
-On one hand, AMUSE has a built-in method \citep{1998ApJ...498..137E}
+On one hand, AMUSE has a built-in method to determine which particles are bound and unbound. This method, the HOP method \citep{1998ApJ...498..137E}, is a group-finding algorithm specifically for N-Body simulations. The algorithm works by calculating the densities at all particle positions and then following the path to the nearest particle with a higher density until the nearest particle is the particle itself. All paths of particles created this way belong to the same group if they have a shared end particle. We think the particles that are bound are all in the same group. All other particles, then, are unbound. This, however, is not clear from initial publication about the HOP algorithm.
 
-On the other hand, we have written our own routine to calculate the bound mass. A vital assumption is that when the kinetic energy $E_k$ of a star is greater than the potential energy $E_pot$, the star is unbound. Conversely, the star is unbound.
+On the other hand, we have written our own routine to calculate the bound mass. A vital assumption is that when the kinetic energy $E_{\rm kin}$ of a star is greater than the potential energy $E_{\rm pot}$, the star is unbound. Conversely, the star is bound. We have ran simulations with both algorithms, but we did not really trust the results obtained using this method. An issue arises, for instance, when simulating the galaxy in a circular orbit around a Black Hole as described in Section~\ref{sec:orbitBH_MW_Mass}. In those simulations, for every cluster size the method still returns that the galaxy is fully bound, even though our plots indicate otherwise (i.e. we can see that a significant fraction of the particles `runs away') and the HOP method yields a fully unbound galaxy. We therefore decided to use the HOP algorithm, which is available in AMUSE.
   
 \section{Galaxy in Orbit around Black Hole} \label{sec:orbitBH_MW_Mass}
 Here we adopt N = 1024 and we use the BHTree algorithm because it has the best time complexity. We do not adjust the default time step, as discussed in Section~\ref{sec:BHTree}. Our analysis consists of the following four parts. 
@@ -250,18 +250,72 @@ Firstly, we define a function to calculate the total bound mass of the cluster. 
 
 Secondly, we add a black hole of mass $M = 1.26 \cdot 10^{12}$ M\Sun. Figure~\ref{fig:dvplane} shows the impact parameter $d$ versus the velocity of the cluster when it is closest to the black hole. For this we have assumed the cluster to be a point mass, since we are only interested in the behaviour of the center of mass of the cluster. We consider the cluster (point mass) bound if its velocity is smaller than the escape velocity $v_{\rm esc}$ given by \begin{eqnarray} v_{\rm esc} &= \sqrt{\frac{2 G M}{d}} \label{eq:vesc} \end{eqnarray} where $G$ is the gravitational constant (in SI), $M$ is the mass of the Black Hole and $d$ is the impact parameter.
 
-Moreover, we adopt a circular orbit around the black hole at a distance $R$ = REPLACE. We investigate the values of the cluster size $r$ over the distance to the Black Hole, $r/R$ to see when the cluster is bound or unbound. 
-
-Finally, we simulate around the bound-unbound border in the $d$,$v$-plane to obtain the mass of the post-encounter cluster and, using the Kepler package \citep{REPLACE} to calculate the orbital parameters.
    \begin{figure}
    \centering
    \includegraphics[width=\hsize]{img/dv_plot.png}
       \caption{Plot of the $d$,$v$-plane indicating when the cluster (simulated as a point mass) becomes bound or unbound.
-      		   Red dots indicate an unbound situation, while blue dots indicate a bound situation.
+      		   Red dots indicate an unbound situation, while blue dots indicate a bound situation. The black line indicates the cut off point given by
+		   the escape velocity.
               }
          \label{fig:dvplane}
    \end{figure}
 
+
+Moreover, we adopt a circular orbit around the black hole at a distance $R$ = 6, 12 and 18 kpc. We investigate the values of the cluster size $r$ over the distance to the Black Hole, $r/R$ to see when the cluster is bound or unbound. We simulate for $r \in [10 - 100]$ pc and added $r \in [110 - 150]$ pc for $R = 18$ kpc. The result is shown in Figure~\ref{fig:bound_mass}. Note that we used the HOP algorithm to calculate the bound mass fraction, as described in Section~\ref{sec:BoundClusterMass}. For this we first deleted the Black Hole particle out of the particle list.
+
+Because we noticed a steep cutoff we have increased the spatial resolution for $R$ = 12 kpc between 60 pc and 80 pc, see Figure~\ref{fig:bound_mass_extra_res}. The function is not smooth but appears to contain a significant amount of noise. The most interesting behaviour of this curve is that, for all three values of $R$, the value of $r/R$ has a specific cutoff of $\pm $ 0.05 for which the cluster becomes unbound. It is around this point we are interested in expanding the parameter space to simulate.
+
+   \begin{figure}
+   \centering
+   \includegraphics[width=\hsize]{img/bound_mass_at_all.png}
+      \caption{Plot of the bound mass fraction as a function of the cluster radius $r$ for galaxy size $R$ = 6, 12 and 18 kpc.
+      		   Note that $r/R$ has a specific value of $\pm$ 0.005 for which we notice a sudden drop to zero of the bound fraction of cluster mass.
+		   This behaviour is visible for all three values of $R$.
+              }
+         \label{fig:bound_mass}
+   \end{figure}
+   
+  \begin{figure}
+   \centering
+   \includegraphics[width=\hsize]{img/bound_mass_at_12000_pc.png}
+      \caption{Plot of the bound mass fraction as a function of the cluster radius $r$ for galaxy size $R$ =  12 kpc.
+      		   Note that $r/R$ has a specific value of $\pm$ 0.005 for which we notice a sudden drop to zero of the bound fraction of cluster mass.
+		   We increased the spatial resolution between 60 and 80 because we noticed a steep cutoff. The function is not smooth but appears to 
+		   contain a significant amount of noise around the stable/unstable border. 
+              }
+         \label{fig:bound_mass_extra_res}
+   \end{figure}
+
+Finally, we simulate around the bound-unbound border in the $d$,$v$-plane to obtain the mass of the post-encounter cluster and, using the Kepler package \citep{REPLACE} to calculate the orbital parameters. Table~\ref{tab:parameterspace} shows the parameter space around the bound/unbound curve used in the simulations.
+
+
+   \begin{table}
+      \caption[]{Parameters and results of a dozen simulations performed around the bound/unbound border.}
+         \label{tab:parameterspace}
+         \begin{tabular}{llll}
+            \hline
+            \noalign{\smallskip}
+            $r$ (pc) & $R$ (kpc) & $v / v_{\rm esc}$ & Bound mass fraction (post-encounter) \\ 
+            \noalign{\smallskip}
+            \hline
+            \noalign{\smallskip}   
+            15 & 3 & 0.8 & 0.735\\                 
+            15 & 3 & 1.0 & 0.956 \\
+            15 & 3 & 1.2 & 0.970 \\                 
+            30 & 6 & 0.8 & 0.749 \\
+            30 & 6 & 1.0 & 0.922 \\                 
+            30 & 6 & 1.2 & 0.955 \\                 
+            60 & 12 & 0.8 & 0.745 \\
+            60 & 12 & 1.0 & 0.929 \\                 
+            60 & 12 & 1.2 & 0.965 \\
+            90 & 18 & 0.8 0.767 \\
+            90 & 18 & 1.0 0.949 \\                 
+            90 & 18 & 1.2 0.978 \\
+            \noalign{\smallskip}
+            \hline
+         \end{tabular}
+   \end{table}
+         
 \section{Conclusions}
 
    \begin{enumerate}
