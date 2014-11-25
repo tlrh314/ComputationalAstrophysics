@@ -1,3 +1,4 @@
 literature
-nbody.hdf5
+*.hdf5
 *.pyc
+data

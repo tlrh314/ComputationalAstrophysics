@@ -429,7 +429,8 @@
 \newcommand*\AANum[1]{\renewcommand*\aa@numarticle{#1}%
 \gdef\@AANum{#1}}
 \newcommand*\@AANum{}
-\newcommand*\aa@numarticle{Article number}
+%\newcommand*\aa@numarticle{Article number}
+\newcommand*\aa@numarticle{Sultan \& Halbesma}
 \newcommand*\rnoteedp{\aa@rnoteedptrue}
 \newcommand*\doi[1]{%
   \renewcommand*\aa@doi{DOI: #1}%
@@ -558,7 +559,8 @@
 \newcommand*\aa@manuscriptnamefont{}
 \newcommand*\aa@todayheadboxfont{}
 \newcommand*\aa@msnrheadboxfont{\LARGE\bfseries\smash}
-\newcommand*\aa@textidlineempty{{\slshape A\&A proofs:}\ manuscript no.~\jobname}
+%\newcommand*\aa@textidlineempty{{\slshape A\&A proofs:}\ manuscript no.~\jobname}
+\newcommand*\aa@textidlineempty{{\slshape Computational Astrophysics:}\ Simulating Ultra Compact Dwarf Galaxies with AMUSE }
 \newcommand*\aa@idlinefont{}
 \newcommand*\aa@doifont{}
 \newcommand*\aa@copyrightfont{\small}
@@ -1025,8 +1027,10 @@
     \fbox{%
       \begin{minipage}{\linewidth-2\fboxsep-2\fboxrule}
         \strut
-        {\aa@journalnamefont \aa@journalname}
-        {\aa@manuscriptnamefont \aa@manuscriptname}\\
+        %{\aa@journalnamefont \aa@journalname}
+        %{\aa@manuscriptnamefont \aa@manuscriptname}\\
+        {\aa@journalnamefont Computational Astrophysics}
+        {\aa@manuscriptnamefont Assignment 1 - Gravitational Dynamics - Shabaz Sultan, 1617451 \& Timo Halbesma, 1603221}\\
         \ifx\aa@msnr\empty
           {\strut\aa@todayheadboxfont \today}%
         \else
