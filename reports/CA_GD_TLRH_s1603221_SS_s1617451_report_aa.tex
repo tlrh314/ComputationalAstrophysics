@@ -27,6 +27,7 @@ citecolor=black}
 % with options according to your LaTeX or PDFLaTeX drivers.
 %
 \newcommand{\Sun}[0]{\ensuremath{_{\odot}}}
+\newcommand{\mytilde}{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}
 \begin{document} 
 
 
@@ -263,13 +264,14 @@ Secondly, we add a black hole of mass $M = 1.26 \cdot 10^{12}$ M\Sun. Figure~\re
 
 Moreover, we adopt a circular orbit around the black hole at a distance $R$ = 6, 12 and 18 kpc. We investigate the values of the cluster size $r$ over the distance to the Black Hole, $r/R$ to see when the cluster is bound or unbound. We simulate for $r \in [10 - 100]$ pc and added $r \in [110 - 150]$ pc for $R = 18$ kpc. The result is shown in Figure~\ref{fig:bound_mass}. Note that we used the HOP algorithm to calculate the bound mass fraction, as described in Section~\ref{sec:BoundClusterMass}. For this we first deleted the Black Hole particle out of the particle list.
 
-Because we noticed a steep cutoff we have increased the spatial resolution for $R$ = 12 kpc between 60 pc and 80 pc, see Figure~\ref{fig:bound_mass_extra_res}. The function is not smooth but appears to contain a significant amount of noise. The most interesting behaviour of this curve is that, for all three values of $R$, the value of $r/R$ has a specific cutoff of $\pm $ 0.05 for which the cluster becomes unbound. It is around this point we are interested in expanding the parameter space to simulate.
+Because we noticed a steep cutoff we have increased the spatial resolution for $R$ = 12 kpc between 60 pc and 80 pc, see Figure~\ref{fig:bound_mass_extra_res}. The function is not smooth but appears to contain a significant amount of noise. The most interesting behaviour of this curve is that, for all three values of $R$, the value of $r/R$ has a specific cutoff of $
+ $ \mytilde 0.005 for which the cluster becomes unbound. It is around this point we are interested in expanding the parameter space to simulate.
 
    \begin{figure}
    \centering
    \includegraphics[width=\hsize]{img/bound_mass_at_all.png}
       \caption{Plot of the bound mass fraction as a function of the cluster radius $r$ for galaxy size $R$ = 6, 12 and 18 kpc.
-      		   Note that $r/R$ has a specific value of $\pm$ 0.005 for which we notice a sudden drop to zero of the bound fraction of cluster mass.
+      		   Note that $r/R$ has a specific value of \mytilde 0.005 for which we notice a sudden drop to zero of the bound fraction of cluster mass.
 		   This behaviour is visible for all three values of $R$.
               }
          \label{fig:bound_mass}
@@ -279,7 +281,7 @@ Because we noticed a steep cutoff we have increased the spatial resolution for $
    \centering
    \includegraphics[width=\hsize]{img/bound_mass_at_12000_pc.png}
       \caption{Plot of the bound mass fraction as a function of the cluster radius $r$ for galaxy size $R$ =  12 kpc.
-      		   Note that $r/R$ has a specific value of $\pm$ 0.005 for which we notice a sudden drop to zero of the bound fraction of cluster mass.
+      		   Note that $r/R$ has a specific value of \mytilde 0.005 for which we notice a sudden drop to zero of the bound fraction of cluster mass.
 		   We increased the spatial resolution between 60 and 80 because we noticed a steep cutoff. The function is not smooth but appears to 
 		   contain a significant amount of noise around the stable/unstable border. 
               }
@@ -290,31 +292,35 @@ Finally, we simulate around the bound-unbound border in the $d$,$v$-plane to obt
 
 
    \begin{table}
-      \caption[]{Parameters and results of a dozen simulations performed around the bound/unbound border.}
+      \caption[]{Parameters and results of a dozen simulations performed around the bound/unbound border. Here, $r$ is the cluster radius, $R$ the
+      		    galaxy size, $v$ the velocity of the cluster, $M/M_{\rm initial}$ the bound mass fraction (post-encounter), $a$ the semi-major axis 
+		    and $e$ the eccentricity.}
          \label{tab:parameterspace}
-         \begin{tabular}{llll}
+         \begin{tabular}{llllll}
             \hline
             \noalign{\smallskip}
-            $r$ (pc) & $R$ (kpc) & $v / v_{\rm esc}$ & Bound mass fraction (post-encounter) \\ 
+            $r$ (pc) & $R$ (kpc) & $v / v_{\rm esc}$ & $M/M_{\rm initial}$ & a (kpc) & $e$ \\ 
             \noalign{\smallskip}
             \hline
             \noalign{\smallskip}   
-            15 & 3 & 0.8 & 0.735\\                 
-            15 & 3 & 1.0 & 0.956 \\
-            15 & 3 & 1.2 & 0.970 \\                 
-            30 & 6 & 0.8 & 0.749 \\
-            30 & 6 & 1.0 & 0.922 \\                 
-            30 & 6 & 1.2 & 0.955 \\                 
-            60 & 12 & 0.8 & 0.745 \\
-            60 & 12 & 1.0 & 0.929 \\                 
-            60 & 12 & 1.2 & 0.965 \\
-            90 & 18 & 0.8 0.767 \\
-            90 & 18 & 1.0 0.949 \\                 
-            90 & 18 & 1.2 0.978 \\
+            15 & 3 & 0.8 & 0.735 & 3.755 & 0.311 \\                 
+            15 & 3 & 1.0 & 0.956 & 9608 & 0.999 \\
+            15 & 3 & 1.2 & 0.970 & 3.409 & 1.88 \\                 
+            30 & 6 & 0.8 & 0.749 & 7.649 & 0.305 \\
+            30 & 6 & 1.0 & 0.922 & 2.863 $\cdot 10^4$ & 0.999 \\                 
+            30 & 6 & 1.2 & 0.955 & 6.819& 1.88 \\                 
+            60 & 12 & 0.8 & 0.745 & 1547 & 0.303 \\
+            60 & 12 & 1.0 & 0.929 & 8.834 $\cdot 10^4$ & 0.999 \\                 
+            60 & 12 & 1.2 & 0.965 & 13.64 & 1.88  \\
+            90 & 18 & 0.8 & 0.767 & 22.99 & 0.305  \\
+            90 & 18 & 1.0 & 0.949 & 1.398 $\cdot 10^5$ & 0.999 \\                 
+            90 & 18 & 1.2 & 0.978 & 20.46 & 1.88 \\
             \noalign{\smallskip}
             \hline
          \end{tabular}
    \end{table}
+         
+         
          
 \section{Conclusions}
 
