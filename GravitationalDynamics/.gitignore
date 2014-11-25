@@ -1,4 +1,4 @@
 literature
 *.hdf5
 *.pyc
-data
+data/*.hdf5
