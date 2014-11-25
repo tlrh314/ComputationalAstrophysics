@@ -88,6 +88,30 @@ def plot_1a(stars, t_end, to_plot, choice, algorithm):
                    .format(algorithm_name, choice))
 
 
+<<<<<<< HEAD
+def radius_dependency(algorithm=BHTree):
+    options = dict()
+    radii = numpy.array([1, 2, 4, 8, 16, 32, 64, 128, 256,
+                         512, 1024], dtype=numpy.int16)
+
+    runtime_of_r_and_t = numpy.zeros(len(radii),
+                                     dtype=numpy.float64)
+
+    options['mcl'] = 10**7 | units.MSun
+    options['n_steps'] = 100
+    options['Ncl'] = 32
+    options['t_end'] = 16 | units.Myr
+    options['algorithm'] = algorithm
+
+    for i, radius in enumerate(radii):
+        t_start = time()
+        runtime_of_r_and_t[i] = (time() - t_start)
+        print str(radius) + ', ' + str(time() - t_start)\
+            + ', ' + str(runtime_of_r_and_t[i])
+
+
+
+=======
 def radius_dependency(algorithm, radii, N, t):
     options = dict()
 
@@ -130,7 +154,6 @@ def plot_radius_dependency(radii, N, t, runtimes):
     pyplot.savefig("plots/CA_GD_TLRH_s1603221_SS_s1617451_rcldep_N{0}_t-end{1}"
                    .format(N, t))
 
-
 if __name__ in '__main__':
     # Assignment 1A
     # stars, t_end, dE, runtime, algorithm = assignment_1a(Hermite)
@@ -142,7 +165,6 @@ if __name__ in '__main__':
     # To implement...
 
     # Assignment 1C
-    runtime_of_radii = dict()
     radii = numpy.array([1, 2, 4, 8, 16, 32, 64, 128, 256,
                          512, 1024], dtype=numpy.int16)
 
