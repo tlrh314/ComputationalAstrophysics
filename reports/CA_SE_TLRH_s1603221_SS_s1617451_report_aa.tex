@@ -184,6 +184,13 @@ Using the method described in the previous paragraph we have obtained Fig.~\ref{
 %     \includegraphics[width=\hsize]{img/mass_over_time.png}
 %     \caption{REPLACE}\label{fig:mass_over_time
 % \end{figure}
+Clusters are groups of stars that to some extent are gravitationally bound to eachother. Globular clusters can be quite tightly bound while open cluster can be bound somewhat more loosely. By simulating a cluster's gravitational interaction over time and finding how many stars remain bound we can study how strongly the stars are bound to the rest of the cluster and how this changes at different ages of the cluster. By using N-body codes the behaviour of gravitationally bound and unbound stars can be studied computationally.
+
+Just running an N-body code on a simulated cluster makes the implicit assumption that the stars are static objects in everything but position and velocity. In particular, it makes the assumption that the masses of the stars do not change. In reality stars change in mass however as they progress through their life, which may have a significant impact on the way they gravitationally interact with the rest of a cluster.
+
+We can however integrate stellar evolution code with an N-body simulation to make our simulation more accurate. By simulating each star's evolution over time we can use this to determine the mass of each star over time. These masses can in turn be used as the input of an N-body code. By alternatingly simulating stellar evolution and gravitational interaction the N-body code will now use different masses for the same star over time.
+
+We have run the simulation with the Barnes-Hut Tree N-Body simulation code for a total period of 1000 Myr. The stellar evolution code being used is SSE. The stellar evolution is run at 10 Myr increments. The N-Body code then takes the new masses and simulates the gravitational dynamics for 10 Myr as well, with a timestep of 0.1 Myr (i.e. it uses 100 timesteps to move the gravitational simulation forward by 10 Myr).
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/massfraction_over_time.png}
