@@ -1,0 +1,194 @@
+%                                                                 aa.dem
+% AA vers. 8.2, LaTeX class for Astronomy & Astrophysics
+% demonstration file
+%                                                       (c) EDP Sciences
+%-----------------------------------------------------------------------
+%
+%\documentclass[referee]{aa} % for a referee version
+%\documentclass[onecolumn]{aa} % for a paper on 1 column
+%\documentclass[longauth]{aa} % for the long lists of affiliations
+%\documentclass[rnote]{aa} % for the research notes
+%\documentclass[letter]{aa} % for the letters
+%\documentclass[bibyear]{aa} % if the references are not structured
+% according to the author-year natbib style
+
+%
+\documentclass{aa}
+
+%
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{txfonts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref}
+\hypersetup{pdfborder=0 0 0, colorlinks=true, linkcolor=black, urlcolor=blue,
+citecolor=black}
+% To add links in your PDF file, use the package "hyperref"
+% with options according to your LaTeX or PDFLaTeX drivers.
+%
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\Sun}[0]{\ensuremath{_{\odot}}}
+\newcommand{\mytilde}{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}
+\begin{document}
+
+
+   \title{Simulating Stellar Evolution with AMUSE}
+
+   \subtitle{Computational Astrophysics (CA) assignment two}
+
+   \author{T. Halbesma (1603221)
+          \inst{1}
+          \and
+          S. Sultan (1617451)\inst{2}
+          }
+
+   \institute{Anton Pannekoek Instituut (API), University of Amsterdam,
+              Science Park 904, 1098 XH Amsterdam
+              \email{timo.halbesma@student.uva.nl}
+         \and
+             Informatics Institute, Section Computational Science, University of Amsterdam,
+             Science Park 904, 1098 XH Amsterdam
+             \email{shabaz.sultan@student.uva.nl}
+             }
+
+   %\date{Received September 15, 1996; accepted March 16, 1997}
+
+% \abstract{}{}{}{}{}
+% 5 {} token are mandatory
+
+  \abstract
+  % context heading (optional)
+  % {} leave it empty if necessary
+   {}
+  % aims heading (mandatory)
+   {}
+  % methods heading (mandatory)
+   {}
+  % results heading (mandatory)
+   {}
+  % conclusions heading (optional), leave it empty if necessary
+   {}
+
+   \keywords{Stellar Evolution --
+                AMUSE --
+                MESA -- EVTwin
+               }
+
+   \maketitle
+%
+%________________________________________________________________
+
+\section{Introduction}
+Once upon a time there was a star. The star was living quietly and peacefully whilst maturing. The evolution of this star has had and will have a profound effect on the life on Earth as this star is our Sun. The inhabitants of planet Earth were quite eager to known how the star were to evolve and how much more trouble- and worry free days our civilization would have left on our beloved habitat, our paradise Earth. A major reason to study stellar evolution is self preservation. Over the previous century much progress in this field has been made in understanding the equations governing the stellar structure and evolution. Additionally, over the last decade the computational power has increased drastically allowing for detailed calculations of, for instance, the Solar structure and (future) evolution using the previously acquired theoretical knowledge. With the current computing power at hand, one no longer has to assume stars to be static. For instance, we are now able to numerically calculate gravitational systems over the nuclear timescales of stars, also accounting for the stellar evolution that is expected to happen in astrophysical systems on this timescale.
+
+In this report, the authors have used the Astrophysical Multipurpose Software Environment, in short AMUSE \citep{2009NewA...14..369P, 2013CoPhC.183..456P, 2013A&A...557A..84P}. As part of AMUSE several community codes are readily available by just changing a single code line. This allows for swift comparison between stellar evolution codes. Moreover, AMUSE combines gravitational dynamics code, stellar evolution methods and hydrodynamical algorithms. One of the great strengths of AMUSE is this combination enabling to set up a bridge between gravitational dynamics and stellar evolution routines. At first, in Sec.~\ref{sec:algorithms} we compare four stellar evolution algorithms. Next, in Sec.~\ref{sec:isochrones}, we obtain theoretical Hertzsprung–Russell diagrams for a given cluster age, so-called isochrones. We fit the isochrones to observed color-magnitude diagrams of clusters Hyades and Pleiades. We continue by examining the mass loss rate due to stellar evolution in Sec.~\ref{sec:massloss}. Finally, we set up the bridge between the stellar evolution and gravitational dynamics code to simulate clusters more realistically in Sec.~\ref{sec:SE_GD}, albeit with the significant simplifications casu quo assumptions discussed in Sec.~\ref{sec:discussion}. Finally, we present the conclusions in Sec.~\ref{sec:conclusions}
+
+\section{Code Comparison}\label{sec:algorithms}
+On the one hand we use two Henyey-type codes: \textbf{MESA} \citep{2011ApJS..192....3P, 2013ApJS..208....4P} and \textbf{EVTwin} \citep{1971MNRAS.151..351E, 1972MNRAS.156..361E, 1973MNRAS.163..279E, 1973A&A....23..325E, 1994MNRAS.270..121H, 1995MNRAS.274..964P, 2001ASPC..229..157E, 2001ApJ...552..664N, 2002ApJ...575..461E, 2007A&A...464L..57S, 2004MNRAS.348..201E, 2008A&A...488.1007G}. On the other hand, we use two parameterized codes:  \textbf{SSE} \citep{2000MNRAS.315..543H} and \textbf{SeBa} \citep{1996A&A...309..179P, 2012A&A...546A..70T}. For a detailed explanation of the Henyey-type code we refer the reader to \cite{1959ApJ...129..628H}. As for parameterized code, we cite \cite{AMUSEdocumentation}: ``stars are parameterized by mass, radius, luminosity, core mass, etc. as functions of time and initial mass''. The star is evolved from zero-age main sequence onwards to obtain the model parameters. The algorithms are analytic fit-based which makes SSE and SEBA rapid. Table~\ref{tab:algorithms} shows a comparison of general properties for the different algorithms.
+
+In our analysis, we will evolve a star of solar mass and solar metallicity up to the current age of the Sun of 4.57 $\pm$ 0.11 Gyr \citep{2002A&A...390.1115B}. By default, the stellar evolution codes in AMUSE assume that the solar metallicity $z = 0.02$.
+In addition, we will run a simulation of a star with 10 M\Sun up to 30 Myr because we expect heavier stars to evolve more rapidly. Specifically, the expected main sequence (hydrogen burning) lifetime $\tau_H$ as a function of mass is given by \citep[][p. 347]{2012sse..book.....K}. Normalised to the Solar lifetime of 10 Gyr \citep{1993ApJ...418..457S} yields
+\begin{eqnarray}
+     \tau_H(M) = 10^{10} \cdot \left(\frac{M}{M\Sun}\right)^{-2.5},
+\end{eqnarray} where $M$ is the mass of the star. For a 10 solar mass star we expect the star to stay on the main sequence when it is evolved until 30 Myr.
+
+Table~\ref{tab:parameterspace} shows the input parameters and the results for the for different algorithms. Three interesting observations are made. Firstly, $L$, $M$ and $R$ are of order unity in solar units, as expected for solar evolution up to the current age of the Sun, save for the final stellar radius calculated using the EVTwin algorithm. This is attributed to a potentially failed build of the EVTwin algorithm which causes suspision in using the EVTwin algorithm. Secondly, the Henyey model calculation times are significantly larger than the parameterized algorithms. In this case, the Henyey runtime is an order of magnitude larger than the parameterized runtime. Lastly, SSE and SeBa yield the same results. This is not surprisingly as the algorithms are not expected to differ for one star because SeBa is a more eleborate algorithm consisting of both SSE and binary evolution code.
+
+\begin{table*}
+    \caption{General properties of the Stellar Evolution codes \citep{AMUSEdocumentation}}
+    \label{tab:algorithms}
+    \centering
+    \begin{tabular}{l l l l l l l l }
+        \hline\hline
+        Algorithm & Type & Binary/Single & Metallicity $z$ & Mass $m$ (M\Sun) \\
+        \hline
+        MESA & Henyey & Both & All, even 0 & 0.1 - 100 \\
+        EVTwin & Henyey & Single\footnotemark[1] & 0.02 only & ? \\
+        SSE & Parameterized & Single & 0.0001 - 0.03 & 0.1 - 100 \\
+        SeBa & Parameterized & Both & 0.0001 - 0.03 & 0.1 - 100 \\
+        \hline
+    \end{tabular}
+\end{table*}
+\addtocounter{footnote}{1}
+\footnotetext[\value{footnote}]{Binaries are not yet available in AMUSE EVTwin Interface.}
+
+\setlength\tabcolsep{2pt}
+\begin{table}
+    \caption[]{Parameters and results of simulations. Here, $z$ is the metallicity, $t_{\rm end}$ the end time of the simulation, $L$ the luminosity, $M$ the mass, $R$ the radius and Runtime is the wall-clock runtime of the algorithm.}
+    \label{tab:parameterspace}
+    \begin{tabular}{lcccccc}
+        \hline
+        \noalign{\smallskip}
+        Algorithm & $z$ & $t_{\rm end} (Myr)$ & $L$ (L\Sun) & $M$ (M\Sun) & $R$ (R\Sun) & Runtime (s) \\
+        \hline
+        \noalign{\smallskip}
+        MESA & 0.02 & 4600 & 1.034 & 1 & 1.016 & 9.54 \\
+        EVTwin  & 0.02 & 4600 & 1.027 & 1 & 0.1834 & 9.58 \\
+        SeBa & 0.02 & 4600 & 0.9585 & 1 & 0.9856 & 0.554 \\
+        SSE & 0.02 & 4600 & 0.9585 & 1 & 0.9856 & 0.166 \\
+        MESA & 0.02 & 30 &  &  &  &  \\
+        EVTwin & 0.02 & 30 &  &  &  &  \\
+        SeBa & 0.02 & 30 &  &  &  &  \\
+        SSE & 0.02 & 30 &  &  &  &  \\
+        \hline
+        \noalign{\smallskip}
+        \noalign{\smallskip}
+    \end{tabular}
+\end{table}
+
+\section{Cluster age} \label{sec:isochrones}
+Here we adopt the empirically derived Salpeter Initial Mass Function (IMF) \citep{1955ApJ...121..161S} given by
+\begin{eqnarray}
+    \zeta(m) \Delta m = \zeta_0 \left(\frac{m}{M\Sun}\right)^{\alpha} \left(\frac{\Delta m}{M\Sun}\right),
+\end{eqnarray} where the exponent $\alpha = -2.35$. In AMUSE the SalpeterIMF implementation yields a mass within the range 0.1 - 125 M\Sun. The IMF shows clearly that higher mass stars are more rare, which we expect. A set of $N$ stars is generated following the Salpeter IMF, where $N$ is the number of stars that we set equal to the amount of data points in the dataset, which is 1339 for the Hyades and 887 for the Pleiades. Using this stellar population, generated at the same point in time, we start the stellar evolution using the SSE algorithm. We set the Hyades metallicity $z = 0.14$ \citep{1998A&A...331...81P}, and for the Pleiades we assume $z = 0.02$.
+
+We obtained observations of the Hyades and Pleiades cluster from the online version of the database for galactic open clusters, BDA \citep{1995ASSL..203..127M}, accessible at \citep{webda}.
+\begin{eqnarray}
+    \frac{L_{\rm star}}{L\Sun} = (M_{V,\rm star}-M_{V,\odot})/2.5 \left(\frac{d_{\rm star}}{d\Sun}\right)^2,
+\end{eqnarray}
+where $L$ is the luminosity, $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S}.
+
+To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
+\begin{eqnarray}
+    T = 4600 \left(\frac{1}{0.92 (B-V) + 1.7} + \frac{1}{0.92(B-V) + 0.62} \right)
+\end{eqnarray}
+
+\section{Cluster mass-loss} \label{sec:massloss}
+
+\section{Stellar Evolution \& Gravitational Dynamics} \label{sec:SE_GD}
+
+\section{Discussion} \label{sec:discussion}
+We must assume that all stars in the cluster are formed at the same point in time in order to use this method. This assumption might not be true as observations show that star formation in clusters might be at different times, causing multiple populations in stellar clusters \citep{2009IAUS..258..233P}.
+
+Binaries are not included in our analysis, although research has shown that almost one in three stars in the Milky Way is in a binary \citep{2006ApJ...640L..63L}. This is a significant fraction that should be included in the analysis.
+
+We have assumed the stars to follow the Salpeter IMF. Other, more recent IMFs are available \citep[e.g.][]{1979ApJS...41..513M, 2001ASPC..228..187K, 2001MNRAS.322..231K} and may be taken into the analysis as a variable.
+For instance, \citet{2001MNRAS.322..231K} is concerned that a universal initial mass function (IMF) is not intuitive yet evidence lacks to support of a variable IMF. Moreover, different slopes are introduced for stars below 0.08 M\Sun and between 0.08 M\Sun and 0.5 M\Sun. In our analysis, we have produced stars with masses below 0.5 M\Sun so this could influence the results. In fact, the mean mass of the Salpeter IMF is 0.35 M\Sun, which is in the 0.08 - 0.5 M\Sun mass range requiring an alternate power law index $\alpha$. This influence should be studied in depth but lacks in our analysis.
+
+We would like to emphasize that the current value of the Solar metallicity is highly debated at present. AMUSE by defaults chooses $z = 0.02$ as Solar metallicity. This value lies within the range of possible Solar metallicities of $z= 0.0187$ to $z = 0.0239$ \citep{2007ApJ...670..872C}. Note, however, that three-dimensional hydrodynamical simulations of the Solar atmosphere yield a significantly lower solar metallicity of $z = 0.0122$ \citep{2006CoAst.147...76A}. At present, most stellar evolution models assume a one dimensional (spherically symmetric) geometry. This neglects three dimensional convective flows that might have a significant influence on the stellar structure. We did not perform a detailed analysis of different stellar metallicities and we merely state that the reader should be cautious regarding the Solar metallicity and note that we adopt $z = 0.02$ as the Solar metallicity because AMUSE defaults to said value. This discussion is highly relevant because, for example, metallicity has a profound influence on the stellar evolution \citep[e.g.][]{1960ApJ...131..598S}. Having said so, the metallicity for the Hyades has been obtained from the literature. We therefore state that for isochrone fitting of the Hyades the metallicity is not a point of discussion. Conversely, the metallicity of the Pleiades was not obtained from the literature, thus, is assumed to be Solar. This analysis might require redoing with a measured metallicity value.
+
+We have noticed that the dataset has double entries. This occurs, for instance, when multiple publications governing the same star exist in the literature. Consequently, some stars have erroneously been given a higher weighing factor in the least squares determination.  We, however, neglect this because (e.g. in the Hyades dataset) we have found that most stars have double entries and stars with double entries span the entire spectrum. We therefore assume that this does not significantly influence the end-result. On the other hand, future analysis can be improved by averaging the data points and calculating the observational error to be used in the least squares averaging. This will result in improving the weight factor as observations contradicting each other will be given a lower weight factor whereas observations in agreement are given a higher weight factor due to the $chi^2$ calculations.
+
+\section{Conclusions} \ref{sec:conclusions}
+
+   \begin{enumerate}
+      \item
+      \item
+   \end{enumerate}
+
+
+\begin{acknowledgements}
+The authors are grateful for the help of their supervisors Edwin van der Helm, MSc and Prof.dr. S.F. Portegies Zwart. \\
+
+This research has made use of the WEBDA database, operated at the Department of Theoretical Physics and Astrophysics of the Masaryk University. \\
+
+This research has made use of NASA's Astrophysics Data System.
+\end{acknowledgements}
+
+
+%-------------------------------------------------------------------
+
+\bibliographystyle{aa}
+%\setlength{\bibsep}{0pt} % Remove whitespace in bibliography.
+\bibliography{CA_SE_TLRH_s1603221_SS_s1617451_report_aa}
+\end{document}
