@@ -50,7 +50,8 @@ f = open("ubv_hyades.peo")
 f.readline()
 f.readline()
 
-hyades_distance = 146.7 | units.lightyear
+#Perryman et al., 1998
+hyades_distance = 46.34 | units.parsec
 
 observational_data = []
 
