@@ -119,6 +119,12 @@ def create_cluster_isochrone(cluster, algorithm=SSE,
     stars = datamodel.Particles(number_of_stars)
     stars.mass = salpeter_masses
 
+    total_mass = 0 | units.MSun
+    for m in stars.mass: total_mass += m
+    print "total mass =", total_mass
+
+    data['total_mass'] = total_mass
+
     stars.metallicity = z
 
     print "The evolution of {0} stars will be".format(number_of_stars),
@@ -128,7 +134,7 @@ def create_cluster_isochrone(cluster, algorithm=SSE,
 
     print "Stars to evolve:"
     print stars
-    data[stars] = stars
+    data['stars'] = stars
 
     stars = stellar.particles.add_particles(stars)
     stellar.commit_particles()
@@ -159,17 +165,18 @@ def create_cluster_isochrone(cluster, algorithm=SSE,
                         cluster+"/",
                         name_of_the_figure, current_time)
 
-        current_time += 1 | units.Myr
+        current_time += 10 | units.Myr
 
     print "Evolved model successfully."
     stellar.stop()
 
     print "All done!"
 
-    data[times] = times
-    data[luminosity_at_time] = luminosity_at_time
-    data[temperatures_at_time] = temperatures_at_time
+    data['times'] = times
+    data['luminosity_at_time'] = luminosity_at_time
+    data['temperatures_at_time'] = temperatures_at_time
 
+    print data
     pickle.dump(data, open(cluster+"/assignment2b.dat", "wb"))
 
 
@@ -198,6 +205,7 @@ def plot_HR_diagram(temperatures, luminosities, directory,
                     " stars\nt="+str(end_time))
         pyplot.axis([xmin, xmax, ymin, ymax])
         pyplot.savefig(directory+name_of_the_figure)
+        pyplot.close()
 
 
 def assignment_2a():
@@ -210,15 +218,14 @@ def assignment_2a():
     datapoints = []
     for algorithm in [SeBa, SSE, EVtwin, MESA]:
     # pass redirection=\"none" to receive full verbose output.
-        for metallicity in [0.02, 0.018, 0.0122, 0.0187, 0.0239]:
+        for metallicity in [0.02]: # [0.02, 0.018, 0.0122, 0.0187, 0.0239]:
             try:
                 datapoints.append(evolve_a_single_star(1 | units.MSun,
                                   metallicity, 4.6 | units.Gyr, algorithm))
                 datapoints.append(evolve_a_single_star(10 | units.MSun,
                                   metallicity, 46 | units.Myr, algorithm))
-                # Should be sufficient for deuterium fusion.
-                datapoints.append(evolve_a_single_star(100 | units.MSun,
-                                  metallicity, 4.6 | units.Myr, algorithm))
+                # datapoints.append(evolve_a_single_star(100 | units.MSun,
+                #                   metallicity, 4.6 | units.Myr, algorithm))
             except Exception, e:  # filty generic, bad practice
                 print Exception, e
                 print traceback.format_exc()
@@ -257,5 +264,5 @@ def assignment_2d():
 if __name__ == '__main__':
     assert is_mpd_running()
 
-    # assignment_2a()
-    assignment_2b()
+    assignment_2a()
+    # assignment_2b()
