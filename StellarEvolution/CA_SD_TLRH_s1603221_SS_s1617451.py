@@ -46,8 +46,8 @@ def evolve_a_single_star(m, z, model_time, algorithm=EVtwin):
 
     t_start = time()
 
-    # stellar = algorithm(redirection="none")
-    stellar = algorithm()
+    stellar = algorithm(redirection="none")
+    # stellar = algorithm()
     algorithm_name = str(algorithm).split('.')[-1][:-2]
 
     stellar.parameters.metallicity = z
@@ -71,9 +71,10 @@ def evolve_a_single_star(m, z, model_time, algorithm=EVtwin):
     set_printing_strategy("custom", preferred_units=[units.MSun, units.RSun,
                           units.Gyr, units.LSun], precision=4, prefix="",
                           separator=" [", suffix="]")
-    # print "{0} & {1} & {2} & {3} & {4} & {5} & {6} \\\\ "\
-    #     .format(algorithm_name, m, z, model_time, star.luminosity,
-    #             star.radius, runtime)
+    # LaTeX table/tabular output <3
+    print "{0} & {1} & {2} & {3} & {4} & {5} & {6} \\\\ "\
+        .format(algorithm_name, z, model_time, star.luminosity,
+                m, star.radius, runtime)
 
     data = {}
     data["algorithm_name"] = algorithm_name
@@ -83,7 +84,7 @@ def evolve_a_single_star(m, z, model_time, algorithm=EVtwin):
     data["radius"] = star.radius
     data["runtime"] = runtime
 
-    print data.items()
+    #print data.items()
 
     return data
 
@@ -216,14 +217,14 @@ def assignment_2a():
     # metallicity = 0.0187 - 0.0239
 
     datapoints = []
-    for algorithm in [SeBa, SSE, EVtwin, MESA]:
+    for algorithm in [MESA, EVtwin, SSE, SeBa]:
     # pass redirection=\"none" to receive full verbose output.
         for metallicity in [0.02]: # [0.02, 0.018, 0.0122, 0.0187, 0.0239]:
             try:
                 datapoints.append(evolve_a_single_star(1 | units.MSun,
                                   metallicity, 4.6 | units.Gyr, algorithm))
                 datapoints.append(evolve_a_single_star(10 | units.MSun,
-                                  metallicity, 46 | units.Myr, algorithm))
+                                  metallicity, 30 | units.Myr, algorithm))
                 # datapoints.append(evolve_a_single_star(100 | units.MSun,
                 #                   metallicity, 4.6 | units.Myr, algorithm))
             except Exception, e:  # filty generic, bad practice

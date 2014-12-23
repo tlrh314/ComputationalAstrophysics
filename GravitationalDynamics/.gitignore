@@ -2,3 +2,6 @@ literature
 *.hdf5
 *.pyc
 data/*.hdf5
+data/*/*.tar.gz
+*.tar.gz
+encounter_plots
