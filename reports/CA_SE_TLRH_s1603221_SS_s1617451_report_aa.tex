@@ -136,28 +136,85 @@ Table~\ref{tab:parameterspace} shows the input parameters and the results for th
     \end{tabular}
 \end{table}
 
-\section{Cluster age} \label{sec:isochrones}
-Here we adopt the empirically derived Salpeter Initial Mass Function (IMF) \citep{1955ApJ...121..161S} given by
+\section{Cluster age}\label{sec:isochrones}
+The method used to calculate the age of the Hyades and Pleiades clusters is described in this section. Firstly, a set of $N$ stars following an initial mass function (IMF) is generated, where $N$ is the number of stars that we set equal to the amount of data points in the dataset. The Hyades dataset consists of 1339 measured stars and Hyades has 887 data entries. Here we adopt the empirically derived Salpeter IMF \citep{1955ApJ...121..161S} given by
 \begin{eqnarray}
     \zeta(m) \Delta m = \zeta_0 \left(\frac{m}{M\Sun}\right)^{\alpha} \left(\frac{\Delta m}{M\Sun}\right),
-\end{eqnarray} where the exponent $\alpha = -2.35$. In AMUSE the SalpeterIMF implementation yields a mass within the range 0.1 - 125 M\Sun. The IMF shows clearly that higher mass stars are more rare, which we expect. A set of $N$ stars is generated following the Salpeter IMF, where $N$ is the number of stars that we set equal to the amount of data points in the dataset, which is 1339 for the Hyades and 887 for the Pleiades. Using this stellar population, generated at the same point in time, we start the stellar evolution using the SSE algorithm. We set the Hyades metallicity $z = 0.14$ \citep{1998A&A...331...81P}, and for the Pleiades we assume $z = 0.02$.
+\end{eqnarray} where the exponent $\alpha = -2.35$. In AMUSE the SalpeterIMF implementation yields a mass within the range 0.1 - 125 M\Sun. The IMF shows clearly that higher mass stars are more rare, which we expect. Using this stellar population, generated at the same point in time, we start the stellar evolution using the SSE algorithm for a given metallicity. We adopt $z = 0.14$ \citep{1998A&A...331...81P} as Hyades metallicity, and for the Pleiades we assume $z = 0.02$ because we could not find a metallicity value in the literature.
 
-We obtained observations of the Hyades and Pleiades cluster from the online version of the database for galactic open clusters, BDA \citep{1995ASSL..203..127M}, accessible at \citep{webda}.
-\begin{eqnarray}
-    \frac{L_{\rm star}}{L\Sun} = (M_{V,\rm star}-M_{V,\odot})/2.5 \left(\frac{d_{\rm star}}{d\Sun}\right)^2,
-\end{eqnarray}
-where $L$ is the luminosity, $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S}.
+    Next, we obtained observed color-magnitude diagrams of the Hyades and Pleiades cluster from the online version of the database for galactic open clusters, BDA \citep{1995ASSL..203..127M}, accessible at \citep{webda}. These photometric datasets contain observed apparent magnitudes in the V band and values of B-V. A measure of the `reddening' of 0.010 magnitude is provided by WEBDA for the Hyades, but no measure of the reddening is available for the Pleiades. This reddening might be a measure of the interstellar extinction but, since we were unsure and we only have a value for one cluster, we did not include this value in the analysis. 
 
-To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
+    To allow for fitting of the numerically calculated HR diagrams, the color-magnitude measures have to be converted to luminosity and $T_{\rm eff}$. Alternatively, the numerical luminosity may be converted to apparent visual magnitude in the V-band and the effective temperature to a corresponding B-V value. We chose the former using equations~\eqref{eq:lum}~and~\eqref{eq:teff}. For the luminosity $L$ we find
+
+
 \begin{eqnarray}
-    T = 4600 \left(\frac{1}{0.92 (B-V) + 1.7} + \frac{1}{0.92(B-V) + 0.62} \right)
+    \frac{L_{\rm star}}{L\Sun} = \frac{(M_{V,\rm star}-M_{V,\odot})}{2.5} \left(\frac{d_{\rm star}}{d\Sun}\right)^2 \label{eq:lum},
 \end{eqnarray}
+where $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S}. To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
+\begin{eqnarray}
+    T = 4600 \left(\frac{1}{0.92 (B-V) + 1.7} + \frac{1}{0.92(B-V) + 0.62} \right) \label{eq:teff}.
+\end{eqnarray}
+
+Fig.~\ref{fig:bestfit} shows the observed dataset converted to luminosity and effective temperature in red and the numerical values in green. In this particular plot we show the best fit. Fig~\ref{fig:chisq} shows the REPLACE. In order to determine which fit is the best REPLACE WITH METHOD.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/test680.png}
+    \caption{REPLACE}\label{fig:bestfit}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/fitness_over_time.png}
+    \caption{REPLACE}\label{fig:chisq}
+\end{figure}
 
 \section{Cluster mass-loss} \label{sec:massloss}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=\hsize]{img/mass_over_time.png}
+%     \caption{REPLACE}\label{fig:mass_over_time
+% \end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/massfraction_over_time.png}
+    \caption{REPLACE}\label{fig:massfraction}
+\end{figure}
+
+
 
 \section{Stellar Evolution \& Gravitational Dynamics} \label{sec:SE_GD}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/cluster_max_radius.png}
+    \caption{REPLACE}\label{fig:max_radius}
+\end{figure}
 
-\section{Discussion} \label{sec:discussion}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/cluster_virial_radius.png}
+    \caption{REPLACE}\label{fig:virial_radius}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/bound_stars.png}
+    \caption{REPLACE}\label{fig:bound_stars}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/stellar_phases_counts.png}
+    \caption{REPLACE}\label{fig:phases}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/stellar_phases_counts_without_main_sequence.png}
+    \caption{REPLACE}\label{fig:phases_without_ms}
+\end{figure}
+
+\section{Discussion}\label{sec:discussion}
 We must assume that all stars in the cluster are formed at the same point in time in order to use this method. This assumption might not be true as observations show that star formation in clusters might be at different times, causing multiple populations in stellar clusters \citep{2009IAUS..258..233P}.
 
 Binaries are not included in our analysis, although research has shown that almost one in three stars in the Milky Way is in a binary \citep{2006ApJ...640L..63L}. This is a significant fraction that should be included in the analysis.
@@ -169,7 +226,7 @@ We would like to emphasize that the current value of the Solar metallicity is hi
 
 We have noticed that the dataset has double entries. This occurs, for instance, when multiple publications governing the same star exist in the literature. Consequently, some stars have erroneously been given a higher weighing factor in the least squares determination.  We, however, neglect this because (e.g. in the Hyades dataset) we have found that most stars have double entries and stars with double entries span the entire spectrum. We therefore assume that this does not significantly influence the end-result. On the other hand, future analysis can be improved by averaging the data points and calculating the observational error to be used in the least squares averaging. This will result in improving the weight factor as observations contradicting each other will be given a lower weight factor whereas observations in agreement are given a higher weight factor due to the $chi^2$ calculations.
 
-\section{Conclusions} \ref{sec:conclusions}
+\section{Conclusions}\ref{sec:conclusions}
 
    \begin{enumerate}
       \item
