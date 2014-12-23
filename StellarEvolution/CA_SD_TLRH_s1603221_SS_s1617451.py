@@ -123,7 +123,7 @@ def create_cluster_isochrone(cluster, algorithm=SSE,
     for m in stars.mass: total_mass += m
     print "total mass =", total_mass
 
-    data['total_mass'] = total_mass
+    data['initial_total_mass'] = total_mass
 
     stars.metallicity = z
 
@@ -145,6 +145,7 @@ def create_cluster_isochrone(cluster, algorithm=SSE,
     times = [] | units.Myr
     luminosity_at_time = [] | units.LSun
     temperatures_at_time = [] | units.K
+    mass_at_time = [] | units.MSun
 
     current_time = 0 | units.Myr
     while current_time < end_time:
@@ -159,6 +160,8 @@ def create_cluster_isochrone(cluster, algorithm=SSE,
         times.append(current_time)
         luminosity_at_time.append(luminosities)
         temperatures_at_time.append(temperatures)
+        mass_at_time.append(stars.total_mass())
+
 
         print current_time
         plot_HR_diagram(temperatures, luminosities,
@@ -175,6 +178,7 @@ def create_cluster_isochrone(cluster, algorithm=SSE,
     data['times'] = times
     data['luminosity_at_time'] = luminosity_at_time
     data['temperatures_at_time'] = temperatures_at_time
+    data['mass_at_time'] = mass_at_time
 
     print data
     pickle.dump(data, open(cluster+"/assignment2b.dat", "wb"))
@@ -263,6 +267,5 @@ def assignment_2d():
 
 if __name__ == '__main__':
     assert is_mpd_running()
-
-    assignment_2a()
-    # assignment_2b()
+    #assignment_2a()
+    assignment_2b()
