@@ -17,4 +17,8 @@ note_to_self.txt
 .mpd.pid
 *.sh
 *.pdf
+<<<<<<< HEAD
 run.log
+=======
+Submission
+>>>>>>> e2ffb3ddfd7d09689e41a53d451e7b90f1269664

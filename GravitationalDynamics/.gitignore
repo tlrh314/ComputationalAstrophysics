@@ -4,4 +4,7 @@ literature
 data/*.hdf5
 data/*/*.tar.gz
 *.tar.gz
+<<<<<<< HEAD
 encounter_plots
+=======
+>>>>>>> e2ffb3ddfd7d09689e41a53d451e7b90f1269664

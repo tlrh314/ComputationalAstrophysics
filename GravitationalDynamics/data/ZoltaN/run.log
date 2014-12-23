@@ -1,0 +1,169 @@
+Running AMUSE 10.0 (binary)
+
+
+Using algorithm 'Hermite', Ncl=1, t_end=1 Myr, rcl=10 parsec
+/media/WD10JPVX/ComputationalAstrophysics/amuse-10.0-Linux_x86_64/lib/python2.7/site-packages/amuse/units/quantities.py:129: RuntimeWarning: invalid value encountered in double_scalars
+  return new_quantity_nonone(self.number / other.number, (self.unit / other.unit).to_simple_form())
+1, 1, 1.62829494476, 0.0
+
+Using algorithm 'Hermite', Ncl=1, t_end=2 Myr, rcl=10 parsec
+1, 2, 1.29470396042, 0.0
+
+Using algorithm 'Hermite', Ncl=1, t_end=4 Myr, rcl=10 parsec
+1, 4, 1.45549988747, 0.0
+
+Using algorithm 'Hermite', Ncl=1, t_end=8 Myr, rcl=10 parsec
+1, 8, 1.24233603477, 0.0
+
+Using algorithm 'Hermite', Ncl=1, t_end=16 Myr, rcl=10 parsec
+1, 16, 1.31819415092, 0.0
+
+Using algorithm 'Hermite', Ncl=1, t_end=32 Myr, rcl=10 parsec
+1, 32, 1.37563180923, 0.0
+
+Using algorithm 'Hermite', Ncl=2, t_end=1 Myr, rcl=10 parsec
+2, 1, 1.38275909424, -7.9475733283e-08
+
+Using algorithm 'Hermite', Ncl=2, t_end=2 Myr, rcl=10 parsec
+2, 2, 4.11912608147, -1.34055976803e-05
+
+Using algorithm 'Hermite', Ncl=2, t_end=4 Myr, rcl=10 parsec
+2, 4, 1.6678481102, -3.84748330698e-08
+
+Using algorithm 'Hermite', Ncl=2, t_end=8 Myr, rcl=10 parsec
+2, 8, 1.54758906364, -7.00450938551e-07
+
+Using algorithm 'Hermite', Ncl=2, t_end=16 Myr, rcl=10 parsec
+2, 16, 1.35217499733, 1.04331211388e-06
+
+Using algorithm 'Hermite', Ncl=2, t_end=32 Myr, rcl=10 parsec
+2, 32, 5.89987492561, -3.93501991461e-06
+
+Using algorithm 'Hermite', Ncl=4, t_end=1 Myr, rcl=10 parsec
+4, 1, 1.64351582527, -6.61555153715e-06
+
+Using algorithm 'Hermite', Ncl=4, t_end=2 Myr, rcl=10 parsec
+4, 2, 1.89787197113, -4.89728700772e-05
+
+Using algorithm 'Hermite', Ncl=4, t_end=4 Myr, rcl=10 parsec
+4, 4, 2.37711906433, 2.04169519151e-08
+
+Using algorithm 'Hermite', Ncl=4, t_end=8 Myr, rcl=10 parsec
+4, 8, 6.50155901909, -2.35316493898e-05
+
+Using algorithm 'Hermite', Ncl=4, t_end=16 Myr, rcl=10 parsec
+4, 16, 5.36684799194, -6.88577629181e-06
+
+Using algorithm 'Hermite', Ncl=4, t_end=32 Myr, rcl=10 parsec
+4, 32, 50.3121430874, -2.07436616691e-05
+
+Using algorithm 'Hermite', Ncl=8, t_end=1 Myr, rcl=10 parsec
+8, 1, 1.47190284729, -6.80340949374e-08
+
+Using algorithm 'Hermite', Ncl=8, t_end=2 Myr, rcl=10 parsec
+8, 2, 3.23056817055, -2.78248943044e-06
+
+Using algorithm 'Hermite', Ncl=8, t_end=4 Myr, rcl=10 parsec
+8, 4, 16.4131538868, -2.10139814733e-05
+
+Using algorithm 'Hermite', Ncl=8, t_end=8 Myr, rcl=10 parsec
+8, 8, 17.1769349575, -1.2504109173e-05
+
+Using algorithm 'Hermite', Ncl=8, t_end=16 Myr, rcl=10 parsec
+8, 16, 17.0323441029, -5.39485133923e-05
+
+Using algorithm 'Hermite', Ncl=8, t_end=32 Myr, rcl=10 parsec
+8, 32, 114.783735037, -0.00035221158609
+
+Using algorithm 'Hermite', Ncl=16, t_end=1 Myr, rcl=10 parsec
+16, 1, 3.19077396393, -2.55244715016e-07
+
+Using algorithm 'Hermite', Ncl=16, t_end=2 Myr, rcl=10 parsec
+16, 2, 3.46717691422, -7.03851791802e-07
+
+Using algorithm 'Hermite', Ncl=16, t_end=4 Myr, rcl=10 parsec
+16, 4, 6.49658799171, -1.20544023779e-06
+
+Using algorithm 'Hermite', Ncl=16, t_end=8 Myr, rcl=10 parsec
+16, 8, 256.70370698, -0.000964571769734
+
+Using algorithm 'Hermite', Ncl=16, t_end=16 Myr, rcl=10 parsec
+16, 16, 201.202217102, -0.000192445095571
+
+Using algorithm 'Hermite', Ncl=16, t_end=32 Myr, rcl=10 parsec
+16, 32, 1909.87248111, -0.00311672658875
+N = 1, t = 1, dE = 1.62825012207, to_plot = 0.0
+N = 1, t = 2, dE = 1.29464793205, to_plot = 0.0
+N = 1, t = 4, dE = 1.45545101166, to_plot = 0.0
+N = 1, t = 8, dE = 1.2422709465, to_plot = 0.0
+N = 1, t = 16, dE = 1.31814098358, to_plot = 0.0
+N = 1, t = 32, dE = 1.37556290627, to_plot = 0.0
+N = 2, t = 1, dE = 1.38268899918, to_plot = -7.9475733283e-08
+N = 2, t = 2, dE = 4.11906003952, to_plot = -1.34055976803e-05
+N = 2, t = 4, dE = 1.66778707504, to_plot = -3.84748330698e-08
+N = 2, t = 8, dE = 1.54752111435, to_plot = -7.00450938551e-07
+N = 2, t = 16, dE = 1.35209798813, to_plot = 1.04331211388e-06
+N = 2, t = 32, dE = 5.89981889725, to_plot = -3.93501991461e-06
+N = 4, t = 1, dE = 1.64333891869, to_plot = -6.61555153715e-06
+N = 4, t = 2, dE = 1.89781999588, to_plot = -4.89728700772e-05
+N = 4, t = 4, dE = 2.37706804276, to_plot = 2.04169519151e-08
+N = 4, t = 8, dE = 6.50150585175, to_plot = -2.35316493898e-05
+N = 4, t = 16, dE = 5.36679720879, to_plot = -6.88577629181e-06
+N = 4, t = 32, dE = 50.3120810986, to_plot = -2.07436616691e-05
+N = 8, t = 1, dE = 1.47186589241, to_plot = -6.80340949374e-08
+N = 8, t = 2, dE = 3.2305431366, to_plot = -2.78248943044e-06
+N = 8, t = 4, dE = 16.4130849838, to_plot = -2.10139814733e-05
+N = 8, t = 8, dE = 17.1768488884, to_plot = -1.2504109173e-05
+N = 8, t = 16, dE = 17.0322639942, to_plot = -5.39485133923e-05
+N = 8, t = 32, dE = 114.783699036, to_plot = -0.00035221158609
+N = 16, t = 1, dE = 3.19072198868, to_plot = -2.55244715016e-07
+N = 16, t = 2, dE = 3.46713805199, to_plot = -7.03851791802e-07
+N = 16, t = 4, dE = 6.49651217461, to_plot = -1.20544023779e-06
+N = 16, t = 8, dE = 256.703644037, to_plot = -0.000964571769734
+N = 16, t = 16, dE = 201.202158928, to_plot = -0.000192445095571
+N = 16, t = 32, dE = 1909.87244511, to_plot = -0.00311672658875
+N = 1, t = 1, dE = 0.0, to_plot = 0.0
+N = 1, t = 2, dE = 0.0, to_plot = 0.0
+N = 1, t = 4, dE = 0.0, to_plot = 0.0
+N = 1, t = 8, dE = 0.0, to_plot = 0.0
+N = 1, t = 16, dE = 0.0, to_plot = 0.0
+N = 1, t = 32, dE = 0.0, to_plot = 0.0
+N = 2, t = 1, dE = -7.9475733283e-08, to_plot = -7.9475733283e-08
+N = 2, t = 2, dE = -1.34055976803e-05, to_plot = -1.34055976803e-05
+N = 2, t = 4, dE = -3.84748330698e-08, to_plot = -3.84748330698e-08
+N = 2, t = 8, dE = -7.00450938551e-07, to_plot = -7.00450938551e-07
+N = 2, t = 16, dE = 1.04331211388e-06, to_plot = 1.04331211388e-06
+N = 2, t = 32, dE = -3.93501991461e-06, to_plot = -3.93501991461e-06
+N = 4, t = 1, dE = -6.61555153715e-06, to_plot = -6.61555153715e-06
+N = 4, t = 2, dE = -4.89728700772e-05, to_plot = -4.89728700772e-05
+N = 4, t = 4, dE = 2.04169519151e-08, to_plot = 2.04169519151e-08
+N = 4, t = 8, dE = -2.35316493898e-05, to_plot = -2.35316493898e-05
+N = 4, t = 16, dE = -6.88577629181e-06, to_plot = -6.88577629181e-06
+N = 4, t = 32, dE = -2.07436616691e-05, to_plot = -2.07436616691e-05
+N = 8, t = 1, dE = -6.80340949374e-08, to_plot = -6.80340949374e-08
+N = 8, t = 2, dE = -2.78248943044e-06, to_plot = -2.78248943044e-06
+N = 8, t = 4, dE = -2.10139814733e-05, to_plot = -2.10139814733e-05
+N = 8, t = 8, dE = -1.2504109173e-05, to_plot = -1.2504109173e-05
+N = 8, t = 16, dE = -5.39485133923e-05, to_plot = -5.39485133923e-05
+N = 8, t = 32, dE = -0.00035221158609, to_plot = -0.00035221158609
+N = 16, t = 1, dE = -2.55244715016e-07, to_plot = -2.55244715016e-07
+N = 16, t = 2, dE = -7.03851791802e-07, to_plot = -7.03851791802e-07
+N = 16, t = 4, dE = -1.20544023779e-06, to_plot = -1.20544023779e-06
+N = 16, t = 8, dE = -0.000964571769734, to_plot = -0.000964571769734
+N = 16, t = 16, dE = -0.000192445095571, to_plot = -0.000192445095571
+N = 16, t = 32, dE = -0.00311672658875, to_plot = -0.00311672658875
+/media/WD10JPVX/ComputationalAstrophysics/amuse-10.0-Linux_x86_64/lib/python2.7/site-packages/amuse/support/literature.py:78: AmuseWarning: 
+
+You have used the following codes, which contain literature references:
+
+	"HermiteInterface"
+		Hut, P., Makino, J. & McMillan, S., *Astrophysical Journal Letters* , **443**, L93-L96 (1995)
+
+
+	"AMUSE"
+		** Portegies Zwart, S. et al., 2013, Multi-physics Simulations Using a Hierarchical Interchangeable Software Interface, Computer Physics Communications 183, 456-468 [2013CoPhC.183..456P]
+		** Pelupessy, F. I. et al., 2013, The Astrophysical Multipurpose Software Environment, Astronomy and Astrophysics 557, 84 [2013A&A...557A..84P]
+		Portegies Zwart, S. et al., 2009, A multiphysics and multiscale software environment for modeling astrophysical systems, *New Astronomy*, **Volume 14**, **Issue 4**, 369-378 [2009NewA...14..369P]
+
+
+  warnings.warn(prefix + self.all_literature_references_string(), exceptions.AmuseWarning)
