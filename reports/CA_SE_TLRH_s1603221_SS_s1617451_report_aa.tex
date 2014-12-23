@@ -148,14 +148,16 @@ The method used to calculate the age of the Hyades and Pleiades clusters is desc
 
 
 \begin{eqnarray}
-    \frac{L_{\rm star}}{L\Sun} = \frac{(M_{V,\rm star}-M_{V,\odot})}{2.5} \left(\frac{d_{\rm star}}{d\Sun}\right)^2 \label{eq:lum},
+    \log \left(\frac{L_{\rm star}}{L\Sun}\right) = \frac{(M_{V,\rm star}-M_{V,\odot})}{-2.5} \left(\frac{d_{\rm star}}{d\Sun}\right)^2 \label{eq:lum},
 \end{eqnarray}
 where $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S}. To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
 \begin{eqnarray}
     T = 4600 \left(\frac{1}{0.92 (B-V) + 1.7} + \frac{1}{0.92(B-V) + 0.62} \right) \label{eq:teff}.
 \end{eqnarray}
 
-Fig.~\ref{fig:bestfit} shows the observed dataset converted to luminosity and effective temperature in red and the numerical values in green. In this particular plot we show the best fit. Fig~\ref{fig:chisq} shows the REPLACE. In order to determine which fit is the best REPLACE WITH METHOD.
+Fig.~\ref{fig:bestfit} shows the converted observations in red and the numerical values in green. In this particular plot we show the best fit. To determine which cluster lifetime fits best to the observations we first need to calculate to which simulated point of the HR diagram in the main sequence, giant branch or white dwarf the observed datapoint is the nearest. We do so using a nearest neighbour algorithm. Next, we calculate two $\chi^2$ values: one for the luminosity and one for the effective temperature. Since the order of magnitude of $\chi^2$ may differ for the luminosity and the effective temperature, we normalize these values such that they are comparable. We calculate $$\chi^2_{\rm normalized} = \sqrt{\frac{\sum_{i=0}^{\rm starcount} (T_i - T_{\rm average})^2}{i}}$$, where $T_i$ is the temperature of star, $T_{\rm average}$ is the temperature averaged over all times, and $i$ is the total number of stars in the dataset. This same formula is used for the luminosities.
+
+Using the method described in the previous paragraph we have obtained Fig.~\ref{fig:chisq} showing the chi squared values for the cluster age in a range from 0 Myr to 1000 Myr. Note that initially our calculated $\chi^2$ is very low compared, then quickly rises, drops to a local minimum and then rises again. We contribute this behaviour to the fact from 0 to 200 Myr the heaviest stars are not yet evolved. This means that there are no stars in the giant branch and asymptotic giant branches. The luminosities are up to three decades higher for those stars causing the rise in $\chi^2$. Those stars either end as white dwarfs or go supernova, to create neutron stars or black holes. Once the white dwarfs start ascending to the lower left of the HR diagram, the main sequence begins to show show a turnoff towards the giant branches, and the giant branch just post Hertzspurung gap starts to be populated, $\chi^2$ decreases again. We expect the ZAMS turnoff point to be the most significant feature to determine the cluster age. To compare, Fig.~\ref{eq:ZAMS} clearly shows the ZAMS for a cluster of 0 Myr without a turnoff towards the giant branches. Moreover, the lower left corner contains no white dwarfs. Another interesting $\chi^2$ value is found at 810 Myr, where a single point breaks the trend. We discard this point for this reason and conclude that the age of the Hyades is 680 Myr. NB, this analysis has only been done once. To calculate a statistical average we would like to conduct the experiment multiple times using several Salpeter IMFs.
 
 \begin{figure}
     \centering
@@ -168,6 +170,13 @@ Fig.~\ref{fig:bestfit} shows the observed dataset converted to luminosity and ef
     \includegraphics[width=\hsize]{img/fitness_over_time.png}
     \caption{REPLACE}\label{fig:chisq}
 \end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/test0.png}
+    \caption{REPLACE}\label{fig:ZAMS}
+\end{figure}
+
 
 \section{Cluster mass-loss} \label{sec:massloss}
 % \begin{figure}
