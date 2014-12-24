@@ -1030,7 +1030,7 @@
         %{\aa@journalnamefont \aa@journalname}
         %{\aa@manuscriptnamefont \aa@manuscriptname}\\
         {\aa@journalnamefont Computational Astrophysics}
-        {\aa@manuscriptnamefont Assignment 1 - Gravitational Dynamics - Shabaz Sultan, 1617451 \& Timo Halbesma, 1603221}\\
+        {\aa@manuscriptnamefont Assignment 2 - Stellar Evolution- Shabaz Sultan, 1617451 \& Timo Halbesma, 1603221}\\
         \ifx\aa@msnr\empty
           {\strut\aa@todayheadboxfont \today}%
         \else
