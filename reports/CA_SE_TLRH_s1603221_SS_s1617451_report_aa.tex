@@ -61,17 +61,18 @@ citecolor=black}
   % {} leave it empty if necessary
    {}
   % aims heading (mandatory)
-   {}
+   {To compare Henyey type and parameterized stellar evolution codes. To determine cluster age by fitting simulated Hertzsprung Russel diagrams for different cluster ages to observed color-magnitude diagrams. In particular for the Hyades and Pleiades clusters. To set up a model for gravitational dynamics of a stellar clusters combined with stellar evolution to take stellar evolution into account of gravitational systems.}
   % methods heading (mandatory)
-   {}
+   {We use the AMUSE framework to simulate HR diagrams for a given Salpeter initial mass function of a population of stars assumed to be generated at the same point in time. We neglect dust and gas in the cluster and assume a single metallicity for the cluster as a whole. Furthermore, we set up a bridge between a Barnes-Hut N-Body gravitational dynamics code and the SSE stellar evolution code.}
   % results heading (mandatory)
-   {}
+   {We find that the simulated Hyades cluster age is 680 Myr as compared the literature value of 625 $\pm$ 50 Myr. REPLACE }
   % conclusions heading (optional), leave it empty if necessary
-   {}
+   {REPLACE}
 
    \keywords{Stellar Evolution --
                 AMUSE --
-                MESA -- EVTwin
+                MESA -- EVTwin -- SSE -- SEBA
+                -- Cluster age determination
                }
 
    \maketitle
@@ -87,12 +88,14 @@ In this report, the authors have used the Astrophysical Multipurpose Software En
 On the one hand we use two Henyey-type codes: \textbf{MESA} \citep{2011ApJS..192....3P, 2013ApJS..208....4P} and \textbf{EVTwin} \citep{1971MNRAS.151..351E, 1972MNRAS.156..361E, 1973MNRAS.163..279E, 1973A&A....23..325E, 1994MNRAS.270..121H, 1995MNRAS.274..964P, 2001ASPC..229..157E, 2001ApJ...552..664N, 2002ApJ...575..461E, 2007A&A...464L..57S, 2004MNRAS.348..201E, 2008A&A...488.1007G}. On the other hand, we use two parameterized codes:  \textbf{SSE} \citep{2000MNRAS.315..543H} and \textbf{SeBa} \citep{1996A&A...309..179P, 2012A&A...546A..70T}. For a detailed explanation of the Henyey-type code we refer the reader to \cite{1959ApJ...129..628H}. As for parameterized code, we cite \cite{AMUSEdocumentation}: ``stars are parameterized by mass, radius, luminosity, core mass, etc. as functions of time and initial mass''. The star is evolved from zero-age main sequence onwards to obtain the model parameters. The algorithms are analytic fit-based which makes SSE and SEBA rapid. Table~\ref{tab:algorithms} shows a comparison of general properties for the different algorithms.
 
 In our analysis, we will evolve a star of solar mass and solar metallicity up to the current age of the Sun of 4.57 $\pm$ 0.11 Gyr \citep{2002A&A...390.1115B}. By default, the stellar evolution codes in AMUSE assume that the solar metallicity $z = 0.02$.
-In addition, we will run a simulation of a star with 10 M\Sun up to 30 Myr because we expect heavier stars to evolve more rapidly. Specifically, the expected main sequence (hydrogen burning) lifetime $\tau_H$ as a function of mass is given by \citep[][p. 347]{2012sse..book.....K}. Normalised to the Solar lifetime of 10 Gyr \citep{1993ApJ...418..457S} yields
+In addition, we will run a simulation of a star with 10 M\Sun up to 10 Myr because we expect heavier stars to evolve more rapidly. Specifically, the expected main sequence (hydrogen burning) lifetime $\tau_H$ as a function of mass is given by \citep[][p. 347]{2012sse..book.....K}. Normalised to the Solar lifetime of 10 Gyr \citep{1993ApJ...418..457S} yields
 \begin{eqnarray}
      \tau_H(M) = 10^{10} \cdot \left(\frac{M}{M\Sun}\right)^{-2.5},
-\end{eqnarray} where $M$ is the mass of the star. For a 10 solar mass star we expect the star to stay on the main sequence when it is evolved until 30 Myr.
+\end{eqnarray} where $M$ is the mass of the star. For a 10 solar mass star we expect the star to stay on the main sequence when it is evolved until 30 Myr. We therefore choose 10 Myr to stay well under the post-main sequence evolution.
 
-Table~\ref{tab:parameterspace} shows the input parameters and the results for the for different algorithms. Three interesting observations are made. Firstly, $L$, $M$ and $R$ are of order unity in solar units, as expected for solar evolution up to the current age of the Sun, save for the final stellar radius calculated using the EVTwin algorithm. This is attributed to a potentially failed build of the EVTwin algorithm which causes suspision in using the EVTwin algorithm. Secondly, the Henyey model calculation times are significantly larger than the parameterized algorithms. In this case, the Henyey runtime is an order of magnitude larger than the parameterized runtime. Lastly, SSE and SeBa yield the same results. This is not surprisingly as the algorithms are not expected to differ for one star because SeBa is a more eleborate algorithm consisting of both SSE and binary evolution code.
+Table~\ref{tab:parameterspace} shows the input parameters and the results for the for different algorithms. Three interesting observations are made. Firstly, $L$, $M$ and $R$ are of order unity in solar units, as expected for solar evolution up to the current age of the Sun, save for the final stellar radius calculated using the EVTwin algorithm. This is attributed to a potentially failed build of the EVTwin algorithm which causes doubt whether to use EVTwin algorithm. In addition, for the 10 M\Sun star the final stellar radii are comparable for MESA, SSE and SEBA but EVTwin differs significantly. Secondly, the Henyey model calculation times are significantly larger than the parameterized algorithms. In this case, the Henyey runtime is an order of magnitude larger than the parameterized runtime. Lastly, SSE and SeBa yield the same results. This is not surprisingly as the algorithms are not expected to differ for one star because SeBa is a more elaborate algorithm consisting of both SSE and binary evolution code.
+
+In order to find the same evolutionary state of an evolved star one can use a built in method in AMUSE that keeps track of the evolutionary state of a star. The input parameter space therefore need not be changed. It is interesting to perform an in-depth analysis of the final (output) parameters as a function of algorithm. We have not included this analysis in the report because we consider this outside the scope of this project because we continue the analysis using only the SSE algorithm.
 
 \begin{table*}
     \caption{General properties of the Stellar Evolution codes \citep{AMUSEdocumentation}}
@@ -124,12 +127,12 @@ Table~\ref{tab:parameterspace} shows the input parameters and the results for th
         \noalign{\smallskip}
         MESA & 0.02 & 4600 & 1.034 & 1 & 1.016 & 9.54 \\
         EVTwin  & 0.02 & 4600 & 1.027 & 1 & 0.1834 & 9.58 \\
-        SeBa & 0.02 & 4600 & 0.9585 & 1 & 0.9856 & 0.554 \\
         SSE & 0.02 & 4600 & 0.9585 & 1 & 0.9856 & 0.166 \\
-        MESA & 0.02 & 30 &  &  &  &  \\
-        EVTwin & 0.02 & 30 &  &  &  &  \\
-        SeBa & 0.02 & 30 &  &  &  &  \\
-        SSE & 0.02 & 30 &  &  &  &  \\
+        SeBa & 0.02 & 4600 & 0.9585 & 1 & 0.9856 & 0.554 \\
+        MESA & 0.02 & 10 & 7460 & 10 & 5.091 & 10.9 \\
+        EVTwin & 0.02 & 10 & 7637 & 10 & 0.8764 & 4.67  \\
+        SSE & 0.02 & 10 & 7233 & 10 & 4.930 & 0.0984 \\
+        SeBa & 0.02 & 10 & 7285 & 10 & 4.938 & 0.133 \\
         \hline
         \noalign{\smallskip}
         \noalign{\smallskip}
@@ -155,26 +158,33 @@ where $M$ the observed apparent magnitude in the V-band and $d$ the distance. He
     T = 4600 \left(\frac{1}{0.92 (B-V) + 1.7} + \frac{1}{0.92(B-V) + 0.62} \right) \label{eq:teff}.
 \end{eqnarray}
 
-Fig.~\ref{fig:bestfit} shows the converted observations in red and the numerical values in green. In this particular plot we show the best fit. To determine which cluster lifetime fits best to the observations we first need to calculate to which simulated point of the HR diagram in the main sequence, giant branch or white dwarf the observed datapoint is the nearest. We do so using a nearest neighbour algorithm. Next, we calculate two $\chi^2$ values: one for the luminosity and one for the effective temperature. Since the order of magnitude of $\chi^2$ may differ for the luminosity and the effective temperature, we normalize these values such that they are comparable. We calculate $$\chi^2_{\rm normalized} = \sqrt{\frac{\sum_{i=0}^{\rm starcount} (T_i - T_{\rm average})^2}{i}}$$, where $T_i$ is the temperature of star, $T_{\rm average}$ is the temperature averaged over all times, and $i$ is the total number of stars in the dataset. This same formula is used for the luminosities.
+Fig.~\ref{fig:bestfit} shows the converted observations in red and the numerical values in green. In this particular plot we show the best fit. To determine which cluster lifetime fits best to the observations we first need to calculate to which simulated point of the HR diagram in the main sequence, giant branch or white dwarf the observed datapoint is the nearest. We do so using a nearest neighbour algorithm. Next, we calculate two $\chi^2$ values: one for the luminosity and one for the effective temperature. Since the order of magnitude of $\chi^2$ may differ for the luminosity and the effective temperature, we normalize these values such that they are comparable. We calculate the standard deviation of all temperatures in the dataset first by
+\begin{eqnarray}
+    \text{std\_dev} = \sqrt{\frac{\sum_{t=0}^{1000 \text{ Myr}} (T_t - T_{\rm average})^2}{\text{starcount}}}, \label{eq:stdev} 
+\end{eqnarray}where $T_t$ is the temperature of star a star at time $t$, $T_{\rm average}$ is the temperature averaged over all times, and `starcount' is the total number of stars in the dataset. Using the standard deviation we can now obtain the normalized $\chi^2$, using
+\begin{eqnarray}
+    \chi^2_{\rm normalized} = \left( \frac{(T_{\rm simulated} - T_{\rm average}) - (T_{\rm observed} - T_{\rm average})}{\text{std\_dev}} \right)^2.
+\end{eqnarray}
+This same algorithm is used for the luminosities but with the $T$ replaced by $L$. Finally, the normalized $\chi^2$ values are added assuming both temperature and luminosity contribute equally (i.e. have the same weight) to the fit.
 
-Using the method described in the previous paragraph we have obtained Fig.~\ref{fig:chisq} showing the chi squared values for the cluster age in a range from 0 Myr to 1000 Myr. Note that initially our calculated $\chi^2$ is very low compared, then quickly rises, drops to a local minimum and then rises again. We contribute this behaviour to the fact from 0 to 200 Myr the heaviest stars are not yet evolved. This means that there are no stars in the giant branch and asymptotic giant branches. The luminosities are up to three decades higher for those stars causing the rise in $\chi^2$. Those stars either end as white dwarfs or go supernova, to create neutron stars or black holes. Once the white dwarfs start ascending to the lower left of the HR diagram, the main sequence begins to show show a turnoff towards the giant branches, and the giant branch just post Hertzspurung gap starts to be populated, $\chi^2$ decreases again. We expect the ZAMS turnoff point to be the most significant feature to determine the cluster age. To compare, Fig.~\ref{eq:ZAMS} clearly shows the ZAMS for a cluster of 0 Myr without a turnoff towards the giant branches. Moreover, the lower left corner contains no white dwarfs. Another interesting $\chi^2$ value is found at 810 Myr, where a single point breaks the trend. We discard this point for this reason and conclude that the age of the Hyades is 680 Myr. NB, this analysis has only been done once. To calculate a statistical average we would like to conduct the experiment multiple times using several Salpeter IMFs.
+Using the method described in the previous paragraph we have obtained Fig.~\ref{fig:chisq} showing the chi squared values for the cluster age in a range from 0 Myr to 1000 Myr. Note that initially our calculated $\chi^2$ is very low compared, then quickly rises, drops to a local minimum and then rises again. We contribute this behaviour to the fact from 0 to 200 Myr the heaviest stars are not yet evolved. This means that there are no stars in the giant branch and asymptotic giant branches. The luminosities are up to three decades higher for those stars causing the rise in $\chi^2$. Those stars either end as white dwarfs or go supernova, to create neutron stars or black holes. Once the white dwarfs start ascending to the lower left of the HR diagram, the main sequence begins to show show a turnoff towards the giant branches, and the giant branch just post Hertzspurung gap starts to be populated, $\chi^2$ decreases again. We expect the ZAMS turnoff point to be the most significant feature to determine the cluster age. To compare, Fig.~\ref{eq:ZAMS} clearly shows the ZAMS for a cluster of 0 Myr without a turnoff towards the giant branches. Moreover, the lower left corner contains no white dwarfs. Another interesting $\chi^2$ value is found at 810 Myr, where a single point breaks the trend. We discard this point for this reason and conclude that the age of the Hyades is 680 Myr. NB, this analysis has only been done once. To calculate a statistical average we would like to conduct the experiment multiple times using several Salpeter IMFs. We can therefore only state that the age of the Hyades according to the literature is 625 $\pm$ 50 Myr \citep{1998A&A...331...81P}. Both values are the same order of magnitude and differ roughly ten percent. However, we cannot say if our findings are in agreement within the error measures as our error measures are unknown.
 
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/test680.png}
-    \caption{REPLACE}\label{fig:bestfit}
+    \caption{HR diagram of the Hyades cluster at 680 Myr. This simulated cluster age yields the best fit to the observed data (i.e. $\chi^2$ is at a local minimum). For the simulation (green dots) we have assumed 1339 stars of metallicity $z=0.14$ following a Salpeter IMF. The red dots indicate the observed color-magnitude diagram converted to luminosity and effective temperature.}\label{fig:bestfit}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/fitness_over_time.png}
-    \caption{REPLACE}\label{fig:chisq}
+    \caption{Plot of $\chi^2$ for each simulated cluster age. To obtain this value we summed the least squares values of the luminosity and temperature after normalization. Note that $\chi^2$ begins at a low value because all stars are ZAMS, thus, there are no stars in the giant branches. The latter category have luminosities up to three decades higher than the current vertical axis of this figure, causing $\chi^2$ to increase once stars evolve off the main sequence into the giant branches. The local minimum observed at 680 Myr is the cluster age. Also note the lower $\chi^2$ value at 810 Myr. This point clearly breaks the trend and for that reason we concluded that this is not the cluster age.}\label{fig:chisq}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/test0.png}
-    \caption{REPLACE}\label{fig:ZAMS}
+    \caption{HR diagram of the Hyades cluster at 0 Myr. Note that since this cluster has just been generated it consists of ZAMS only. Note that main sequence follows a straight line in comparison to the main sequence cut off towards the giant branches for older clusters. This is the primary indicator to determine the cluster age, together with the white dwarfs in the lower left region and the red giants just after the Hertzsprung Gap.}\label{fig:ZAMS}
 \end{figure}
 
 
@@ -186,9 +196,9 @@ Using the method described in the previous paragraph we have obtained Fig.~\ref{
 % \end{figure}
 As stars age they loose mass. By simulating a group of stars with an appropriate distribution of different masses for the stars we can study how a cluster of stars changes in mass. The changing mass can have further repercussion for the gravitational interaction within a cluster (see section~\ref{sec:SE_GD}). 
 
-We have initialized a set of stars with the Salpeter IMF. In figure~\ref{fig:massfraction} we can see that over a 1000 Myr simulation the cluster loses about 16\% of its mass. It should be noted that we are strictly talking about mass inside stars; clusters can have mass that is contained in things like dust and gas clouds. Specifically at 680 Myr (the age derived in section~\ref{sec:isochrones}) the fraction of mass retained in stars relative to the starting mass was 84\%. 
+We have initialized a set of stars with the Salpeter IMF. In Fig.~\ref{fig:massfraction} we can see that over a 1000 Myr simulation the cluster loses about 16\% of its mass. It should be noted that we are strictly talking about mass inside stars; clusters can have mass that is contained in things like dust and gas clouds. Specifically at 680 Myr (the age derived in section~\ref{sec:isochrones}) the fraction of mass retained in stars relative to the starting mass was 84\%. 
 
-This simulation was done with parameters simulating the Hyades. The present day total mass of the Hyades cluster is about 400 M\Sun \citep{2009AIPC.1094..497B}. This would imply an initial cluster mass of $\frac{400 M\Sun}{0.84} \approx 476 M\Sun$ if we want to end up with a mass of 400 M\Sun at 680 Myr. 
+This simulation was done with parameters simulating the Hyades. The present day total mass of the Hyades cluster is about 400 M\Sun \citep{2009AIPC.1094..497B}. This would imply an initial cluster mass of $400 M\Sun/0.84 \approx 476 M\Sun$ if we want to end up with a mass of 400 M\Sun \, at 680 Myr. 
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/massfraction_over_time.png}
@@ -202,15 +212,15 @@ Just running an N-body code on a simulated cluster makes the implicit assumption
 
 We can integrate stellar evolution code with an N-body simulation to make our simulation more accurate. By simulating each star's evolution over time we can use this to determine the mass of each star over time. These masses can in turn be used as the input of an N-body code. By alternatingly simulating stellar evolution and gravitational interaction the N-body code will now use different masses for the same star over time.
 
-We have run the simulation with the Barnes-Hut Tree N-Body simulation code for a total period of 1000 Myr. The stellar evolution code being used is SSE. The stellar evolution is run at 10 Myr increments. The N-Body code then takes the new masses and simulates the gravitational dynamics for 10 Myr as well, with a timestep of 0.1 Myr (i.e. it uses 100 timesteps to move the gravitational simulation forward by 10 Myr).
+We have run the simulation with the Barnes-Hut Tree N-Body simulation code \citep{1986Natur.324..446B} for a total period of 1000 Myr. The stellar evolution code being used is SSE. The stellar evolution is run at 10 Myr increments. The N-Body code then takes the new masses and simulates the gravitational dynamics for 10 Myr as well, with a timestep of 0.1 Myr (i.e. it uses 100 timesteps to move the gravitational simulation forward by 10 Myr).
 
-To find the stars that are considered gravitationally bound the HOP algorithm is used \citep{1998ApJ...498..137E}. Based on this algorithm the number of bound stars in the cluster can be seen in figure~\ref{fig:bound_stars}. The cluster only looses about 7 stars at the start of the simulation and stabilizes at 7-9 unbounded stars and over 1300 that remain bounded. 
+To find the stars that are considered gravitationally bound the HOP algorithm is used \citep{1998ApJ...498..137E}. Based on this algorithm the number of bound stars in the cluster can be seen in Fig.~\ref{fig:bound_stars}. The cluster only looses about 7 stars at the start of the simulation and stabilizes at 7-9 unbounded stars and over 1300 that remain bounded. 
 
-Because the bound stars metric doesn't show a lot of change instead the clusters radius over time might be a more interesting metric. The most naive way to measure radius is to take the maximum distance a star has to the centre of the cluster. As can be seen in figure~\ref{fig:max_radius} this radius increases roughly linearly over time. Because it is determined by the outermost star, this would be consistent with a system where there is at least one star that is relatively unbound by the clusters gravity and is moving away from its centre at a roughly constant speed. 
+Because the bound stars metric doesn't show a lot of change instead the clusters radius over time might be a more interesting metric. The most naive way to measure radius is to take the maximum distance a star has to the centre of the cluster. As can be seen in Fig.~\ref{fig:max_radius} this radius increases roughly linearly over time. Because it is determined by the outermost star, this would be consistent with a system where there is at least one star that is relatively unbound by the clusters gravity and is moving away from its centre at a roughly constant speed. 
 
-More interesting is the virial radius. For our simulated cluster this was at 10 lightyears (about 3 parsecs), matching the core radius of the Hyades cluster \citep{2009AIPC.1094..497B}. As can be seen in figure~\ref{fig:virial_radius} it has a large jump at the star of the simulation and then a more slowly increasing trend.
+More interesting is the virial radius. For our simulated cluster this was at 10 lightyears (about 3 parsecs), matching the core radius of the Hyades cluster \citep{2009AIPC.1094..497B}. As can be seen in Fig.~\ref{fig:virial_radius} it has a large jump at the star of the simulation and then a more slowly increasing trend.
 
-Finally we can look at what phases of their lives the stars in the simulation are over time. We group the stars into three categories: main sequence stars, giant stars and remnant stars. In figure~\ref{fig:phases} it can be seen that the fast majority of the stars are on the main sequence and remain their during the simulation. When we only look at giant and remnant stars in figure~\ref{fig:phases_without_ms} we can see that while the number of remnant stars steadily increases, the number of giant stars at any single point in time remains relatively constant. This implies that the rate of stars entering their giant phase and burning out from the giant phase is roughly equal.
+Finally we can look at what phases of their lives the stars in the simulation are over time. We group the stars into three categories: main sequence stars, giant stars and remnant stars. In Fig.~\ref{fig:phases} it can be seen that the fast majority of the stars are on the main sequence and remain their during the simulation. When we only look at giant and remnant stars in Fig.~\ref{fig:phases_without_ms} we can see that while the number of remnant stars steadily increases, the number of giant stars at any single point in time remains relatively constant. This implies that the rate of stars entering their giant phase and burning out from the giant phase is roughly equal.
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/cluster_max_radius.png}
@@ -253,16 +263,17 @@ We would like to emphasize that the current value of the Solar metallicity is hi
 
 We have noticed that the dataset has double entries. This occurs, for instance, when multiple publications governing the same star exist in the literature. Consequently, some stars have erroneously been given a higher weighing factor in the least squares determination.  We, however, neglect this because (e.g. in the Hyades dataset) we have found that most stars have double entries and stars with double entries span the entire spectrum. We therefore assume that this does not significantly influence the end-result. On the other hand, future analysis can be improved by averaging the data points and calculating the observational error to be used in the least squares averaging. This will result in improving the weight factor as observations contradicting each other will be given a lower weight factor whereas observations in agreement are given a higher weight factor due to the $chi^2$ calculations.
 
-\section{Conclusions}\ref{sec:conclusions}
-
-   \begin{enumerate}
-      \item
-      \item
+\section{Conclusions}\label{sec:conclusions}
+\begin{enumerate}
+    \item We find that the age of the Hyades is 680 Myr, as compared to 625 $\pm$ 50 Myr obtained from the literature.
+    \item At present, the Hyades has lost 16\% of its mass due to stellar evolution.
+    \item Within AMUSE it is fairly easy to set up a bridge between stellar evolution code and gravitational dynamics. In the future mass loss could be added as gas in the galaxy/cluster and taken into account using the hydrodynamics code available in AMUSE.
+    \item REPLACE
    \end{enumerate}
 
 
 \begin{acknowledgements}
-The authors are grateful for the help of their supervisors Edwin van der Helm, MSc and Prof.dr. S.F. Portegies Zwart. \\
+The authors are grateful for the help of their supervisors Edwin van der Helm, MSc and Prof. dr. S.F. Portegies Zwart. \\
 
 This research has made use of the WEBDA database, operated at the Department of Theoretical Physics and Astrophysics of the Masaryk University. \\
 
