@@ -132,15 +132,19 @@ for i, time in enumerate(times):
     xmin, xmax = 20000.0, 2500.0
     ymin, ymax = 1.e-4, 1.e4
     pyplot.axis([xmin, xmax, ymin, ymax])
-    pyplot.loglog(temperatures_at_time[i][:].value_in(units.K), luminosity_at_time[i][:].value_in(units.LSun), "g.")
+    pyplot.loglog(temperatures_at_time[i][:].value_in(units.K), luminosity_at_time[i][:].value_in(units.LSun), "g.", label="Simulated")
     observed_temperatures = [j["temperature"].number for j in observational_data]
     a = observed_temperatures | units.K
     observed_luminosities = [j["solar_luminosity"].number for j in observational_data]
     b = observed_luminosities | units.LSun
-    pyplot.loglog(observed_temps, observed_lums, 'r.')
-    pyplot.title("at time " + str(time) + " with fit " + str(squares_sum))
+    pyplot.loglog(observed_temps, observed_lums, 'r.', label="Observed")
+    pyplot.xlabel(r'$\log \, T_{\rm eff} (K)$')
+    pyplot.ylabel(r'$\log \, L (L_{\odot})$')
+    pyplot.title("HR diagram at time " + str(time) + r' with $\chi^2$=' + str(squares_sum))
+    pyplot.legend()
     pyplot.savefig("test"+str(int(time.number)))
     pyplot.close()
     print squares_sum, time
 
-    #print i, time
+    print i, time
+    # import sys; sys.exit()
