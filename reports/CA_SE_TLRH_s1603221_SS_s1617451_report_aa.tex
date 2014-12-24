@@ -65,9 +65,9 @@ citecolor=black}
   % methods heading (mandatory)
    {We use the AMUSE framework to simulate HR diagrams for a given Salpeter initial mass function of a population of stars assumed to be generated at the same point in time. We neglect dust and gas in the cluster and assume a single metallicity for the cluster as a whole. Furthermore, we set up a bridge between a Barnes-Hut N-Body gravitational dynamics code and the SSE stellar evolution code.}
   % results heading (mandatory)
-   {We find that the simulated Hyades cluster age is 680 Myr as compared the literature value of 625 $\pm$ 50 Myr. REPLACE }
+   {We find that the simulated Hyades cluster age is 680 Myr as compared the literature value of 625 $\pm$ 50 Myr. A simulated cluster over time has an increasing number of remnant stars and a constant number of stars in a giant phase.}
   % conclusions heading (optional), leave it empty if necessary
-   {REPLACE}
+   {By simulating a cluster and fitting it to observed data of a real cluster initial conditions for that cluster can be derived. Setting up a simulation with said initial conditions allows study of behaviour of stars over a cluster's lifetime. By using results from stellar evolution code better gravitational simulations can be realized that take into account the changing masses of stars.}
 
    \keywords{Stellar Evolution --
                 AMUSE --
@@ -153,17 +153,17 @@ The method used to calculate the age of the Hyades and Pleiades clusters is desc
 \begin{eqnarray}
     \log \left(\frac{L_{\rm star}}{L\Sun}\right) = \frac{(M_{V,\rm star}-M_{V,\odot})}{-2.5} \left(\frac{d_{\rm star}}{d\Sun}\right)^2 \label{eq:lum},
 \end{eqnarray}
-where $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S}. To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
+where $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S} and $d_{\rm star} = 46.34 \text{pc}$ \citep{1998A&A...331...81P}. To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
 \begin{eqnarray}
     T = 4600 \left(\frac{1}{0.92 (B-V) + 1.7} + \frac{1}{0.92(B-V) + 0.62} \right) \label{eq:teff}.
 \end{eqnarray}
 
 Fig.~\ref{fig:bestfit} shows the converted observations in red and the numerical values in green. In this particular plot we show the best fit. To determine which cluster lifetime fits best to the observations we first need to calculate to which simulated point of the HR diagram in the main sequence, giant branch or white dwarf the observed datapoint is the nearest. We do so using a nearest neighbour algorithm. Next, we calculate two $\chi^2$ values: one for the luminosity and one for the effective temperature. Since the order of magnitude of $\chi^2$ may differ for the luminosity and the effective temperature, we normalize these values such that they are comparable. We calculate the standard deviation of all temperatures in the dataset first by
 \begin{eqnarray}
-    \text{std\_dev} = \sqrt{\frac{\sum_{t=0}^{1000 \text{ Myr}} (T_t - T_{\rm average})^2}{\text{starcount}}}, \label{eq:stdev} 
+    \sigma = \sqrt{\frac{\sum_{t=0}^{\text{starcount}} (T_t - T_{\rm average})^2}{\text{starcount}}}, \label{eq:stdev} 
 \end{eqnarray}where $T_t$ is the temperature of star a star at time $t$, $T_{\rm average}$ is the temperature averaged over all times, and `starcount' is the total number of stars in the dataset. Using the standard deviation we can now obtain the normalized $\chi^2$, using
 \begin{eqnarray}
-    \chi^2_{\rm normalized} = \left( \frac{(T_{\rm simulated} - T_{\rm average}) - (T_{\rm observed} - T_{\rm average})}{\text{std\_dev}} \right)^2.
+    \chi^2_{\rm normalized} = \left( \frac{T_{\rm simulated} - T_{\rm observed}}{\sigma} \right)^2.
 \end{eqnarray}
 This same algorithm is used for the luminosities but with the $T$ replaced by $L$. Finally, the normalized $\chi^2$ values are added assuming both temperature and luminosity contribute equally (i.e. have the same weight) to the fit.
 
@@ -268,7 +268,7 @@ We have noticed that the dataset has double entries. This occurs, for instance, 
     \item We find that the age of the Hyades is 680 Myr, as compared to 625 $\pm$ 50 Myr obtained from the literature.
     \item At present, the Hyades has lost 16\% of its mass due to stellar evolution.
     \item Within AMUSE it is fairly easy to set up a bridge between stellar evolution code and gravitational dynamics. In the future mass loss could be added as gas in the galaxy/cluster and taken into account using the hydrodynamics code available in AMUSE.
-    \item REPLACE
+    \item As a simulated cluster ages, it accumulates remnant stars, but will have a roughly constant number of stars in a giant phase at any point in time.
    \end{enumerate}
 
 
