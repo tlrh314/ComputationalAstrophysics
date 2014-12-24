@@ -147,4 +147,4 @@ for i, time in enumerate(times):
     print squares_sum, time
 
     print i, time
-    # import sys; sys.exit()
+    import sys; sys.exit()
