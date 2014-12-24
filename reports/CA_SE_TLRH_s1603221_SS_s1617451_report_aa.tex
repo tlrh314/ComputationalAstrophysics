@@ -143,7 +143,7 @@ In order to find the same evolutionary state of an evolved star one can use a bu
 The method used to calculate the age of the Hyades and Pleiades clusters is described in this section. Firstly, a set of $N$ stars following an initial mass function (IMF) is generated, where $N$ is the number of stars that we set equal to the amount of data points in the dataset. The Hyades dataset consists of 1339 measured stars and Hyades has 887 data entries. Here we adopt the empirically derived Salpeter IMF \citep{1955ApJ...121..161S} given by
 \begin{eqnarray}
     \zeta(m) \Delta m = \zeta_0 \left(\frac{m}{M\Sun}\right)^{\alpha} \left(\frac{\Delta m}{M\Sun}\right),
-\end{eqnarray} where the exponent $\alpha = -2.35$. In AMUSE the SalpeterIMF implementation yields a mass within the range 0.1 - 125 M\Sun. The IMF shows clearly that higher mass stars are more rare, which we expect. Using this stellar population, generated at the same point in time, we start the stellar evolution using the SSE algorithm for a given metallicity. We adopt $z = 0.14$ \citep{1998A&A...331...81P} as Hyades metallicity, and for the Pleiades we assume $z = 0.02$ because we could not find a metallicity value in the literature.
+\end{eqnarray} where the exponent $\alpha = -2.35$. In AMUSE the SalpeterIMF implementation yields a mass within the range 0.1 - 125 M\Sun. The IMF shows clearly that higher mass stars are more rare, which we expect. Using this stellar population, generated at the same point in time, we start the stellar evolution using the SSE algorithm for a given metallicity. We adopt $z = 0.14$ \citep{1998A&A...331...81P} as Hyades metallicity, and for the Pleiades we assume $z = 0.02$, which is supported by \citet{2009AJ....138.1292S} within the error estimation.
 
     Next, we obtained observed color-magnitude diagrams of the Hyades and Pleiades cluster from the online version of the database for galactic open clusters, BDA \citep{1995ASSL..203..127M}, accessible at \citep{webda}. These photometric datasets contain observed apparent magnitudes in the V band and values of B-V. A measure of the `reddening' of 0.010 magnitude is provided by WEBDA for the Hyades, but no measure of the reddening is available for the Pleiades. This reddening might be a measure of the interstellar extinction but, since we were unsure and we only have a value for one cluster, we did not include this value in the analysis. 
 
@@ -153,7 +153,7 @@ The method used to calculate the age of the Hyades and Pleiades clusters is desc
 \begin{eqnarray}
     \log \left(\frac{L_{\rm star}}{L\Sun}\right) = \frac{(M_{V,\rm star}-M_{V,\odot})}{-2.5} \left(\frac{d_{\rm star}}{d\Sun}\right)^2 \label{eq:lum},
 \end{eqnarray}
-where $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S} and $d_{\rm star} = 46.34 \text{pc}$ \citep{1998A&A...331...81P}. To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
+where $M$ the observed apparent magnitude in the V-band and $d$ the distance. Here we adopt $M_{V, \odot} = -26.73$ \citep{1957ApJ...126..266S} and $d_{\rm star} = 46.34 \text{pc}$ for the Hyades \citep{1998A&A...331...81P} and $d_{\rm star} = 120.2 \text{pc}$ for the Pleiades \citep{2009A&A...497..209V}. To obtain the temperature from B and V photometric filter measurements, we use the equation derived by \citet{2012EL.....9734008B}
 \begin{eqnarray}
     T = 4600 \left(\frac{1}{0.92 (B-V) + 1.7} + \frac{1}{0.92(B-V) + 0.62} \right) \label{eq:teff}.
 \end{eqnarray}
@@ -169,6 +169,8 @@ This same algorithm is used for the luminosities but with the $T$ replaced by $L
 
 Using the method described in the previous paragraph we have obtained Fig.~\ref{fig:chisq} showing the chi squared values for the cluster age in a range from 0 Myr to 1000 Myr. Note that initially our calculated $\chi^2$ is very low compared, then quickly rises, drops to a local minimum and then rises again. We contribute this behaviour to the fact from 0 to 200 Myr the heaviest stars are not yet evolved. This means that there are no stars in the giant branch and asymptotic giant branches. The luminosities are up to three decades higher for those stars causing the rise in $\chi^2$. Those stars either end as white dwarfs or go supernova, to create neutron stars or black holes. Once the white dwarfs start ascending to the lower left of the HR diagram, the main sequence begins to show show a turnoff towards the giant branches, and the giant branch just post Hertzspurung gap starts to be populated, $\chi^2$ decreases again. We expect the ZAMS turnoff point to be the most significant feature to determine the cluster age. To compare, Fig.~\ref{eq:ZAMS} clearly shows the ZAMS for a cluster of 0 Myr without a turnoff towards the giant branches. Moreover, the lower left corner contains no white dwarfs. Another interesting $\chi^2$ value is found at 810 Myr, where a single point breaks the trend. We discard this point for this reason and conclude that the age of the Hyades is 680 Myr. NB, this analysis has only been done once. To calculate a statistical average we would like to conduct the experiment multiple times using several Salpeter IMFs. We can therefore only state that the age of the Hyades according to the literature is 625 $\pm$ 50 Myr \citep{1998A&A...331...81P}. Both values are the same order of magnitude and differ roughly ten percent. However, we cannot say if our findings are in agreement within the error measures as our error measures are unknown.
 
+For the Pleiades the same analysis has been performed. Fig.~\ref{fig:chisq_pleiades} shows the normalized chi squared for this simulation. The most likely cluster age is 100 Myr ($\chi^2 = 7.312$) or 230 Myr ($\chi^2 = 12.74$). For higher cluster ages $\chi^2$ increases significantly. We therefore conclude that the most likely cluster age is 100 Myr. The literature cluster age of the Pleiades is 75 - 150 Myr \citep[e.g.][]{1998ApJ...497..253U}.
+
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/test680.png}
@@ -178,8 +180,17 @@ Using the method described in the previous paragraph we have obtained Fig.~\ref{
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/fitness_over_time.png}
-    \caption{Plot of $\chi^2$ for each simulated cluster age. To obtain this value we summed the least squares values of the luminosity and temperature after normalization. Note that $\chi^2$ begins at a low value because all stars are ZAMS, thus, there are no stars in the giant branches. The latter category have luminosities up to three decades higher than the current vertical axis of this figure, causing $\chi^2$ to increase once stars evolve off the main sequence into the giant branches. The local minimum observed at 680 Myr is the cluster age. Also note the lower $\chi^2$ value at 810 Myr. This point clearly breaks the trend and for that reason we concluded that this is not the cluster age.}\label{fig:chisq}
+    \caption{Plot of $\chi^2$ for each simulated cluster age of the Hyades cluster. To obtain this value we summed the least squares values of the luminosity and temperature after normalization. Note that $\chi^2$ begins at a low value because all stars are ZAMS, thus, there are no stars in the giant branches. The latter category have luminosities up to three decades higher than the current vertical axis of this figure, causing $\chi^2$ to increase once stars evolve off the main sequence into the giant branches. The local minimum observed at 680 Myr is the cluster age. Also note the lower $\chi^2$ value at 810 Myr. This point clearly breaks the trend and for that reason we concluded that this is not the cluster age.}\label{fig:chisq}
 \end{figure}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/fitness_over_time_pleiades.png}
+    \caption{Plot of $\chi^2$ for each simulated cluster age of the Pleiades cluster. To obtain this value we summed the least squares values of the luminosity and temperature after normalization. }\label{fig:chisq_pleiades}
+\end{figure}
+
+
 
 \begin{figure}
     \centering

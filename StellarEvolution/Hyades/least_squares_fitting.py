@@ -2,6 +2,8 @@ import pickle
 import math
 from amuse.units import units
 
+import matplotlib
+matplotlib.use("Agg", warn=False)
 from matplotlib import pyplot
 from amuse.plot import xlabel, ylabel
 
@@ -147,4 +149,4 @@ for i, time in enumerate(times):
     print squares_sum, time
 
     print i, time
-    import sys; sys.exit()
+    # import sys; sys.exit()
