@@ -184,22 +184,27 @@ Using the method described in the previous paragraph we have obtained Fig.~\ref{
 %     \includegraphics[width=\hsize]{img/mass_over_time.png}
 %     \caption{REPLACE}\label{fig:mass_over_time
 % \end{figure}
-Clusters are groups of stars that to some extent are gravitationally bound to eachother. Globular clusters can be quite tightly bound while open cluster can be bound somewhat more loosely. By simulating a cluster's gravitational interaction over time and finding how many stars remain bound we can study how strongly the stars are bound to the rest of the cluster and how this changes at different ages of the cluster. By using N-body codes the behaviour of gravitationally bound and unbound stars can be studied computationally.
+As stars age they loose mass. By simulating a group of stars with an appropriate distribution of different masses for the stars we can study how a cluster of stars changes in mass. The changing mass can have further repercussion for the gravitational interaction within a cluster (see section~\ref{sec:SE_GD}). 
+
+We have initialized a set of stars with the Salpeter IMF. In figure~\ref{fig:massfraction} we can see that over a 1000 Myr simulation the cluster loses about 16\% of its mass. It should be noted that we are strictly talking about mass inside stars; clusters can have mass that is contained in things like dust and gas clouds. Specifically at 680 Myr (the age derived in section~\ref{sec:isochrones}) the fraction of mass retained in stars relative to the starting mass was 84\%. 
+
+This simulation was done with parameters simulating the Hyades. The present day total mass of the Hyades cluster is about 400 M\Sun \citep{2009AIPC.1094..497B}. This would imply an initial cluster mass of $\frac{400 M\Sun}{0.84} \approx 476 M\Sun$ if we want to end up with a mass of 400 M\Sun at 680 Myr. 
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/massfraction_over_time.png}
+    \caption{Fraction of initial present in stars of a cluster over time.}\label{fig:massfraction}
+\end{figure}
+
+\section{Stellar Evolution \& Gravitational Dynamics} \label{sec:SE_GD}
+Clusters are groups of stars that to some extent are gravitationally bound to each other. Globular clusters can be quite tightly bound while open cluster can be bound somewhat more loosely. By simulating a cluster's gravitational interaction over time and finding how many stars remain bound we can study how strongly the stars are bound to the rest of the cluster and how this changes at different ages of the cluster. By using N-body codes the behavior of gravitationally bound and unbound stars can be studied computationally.
 
 Just running an N-body code on a simulated cluster makes the implicit assumption that the stars are static objects in everything but position and velocity. In particular, it makes the assumption that the masses of the stars do not change. In reality stars change in mass however as they progress through their life, which may have a significant impact on the way they gravitationally interact with the rest of a cluster.
 
 We can however integrate stellar evolution code with an N-body simulation to make our simulation more accurate. By simulating each star's evolution over time we can use this to determine the mass of each star over time. These masses can in turn be used as the input of an N-body code. By alternatingly simulating stellar evolution and gravitational interaction the N-body code will now use different masses for the same star over time.
 
 We have run the simulation with the Barnes-Hut Tree N-Body simulation code for a total period of 1000 Myr. The stellar evolution code being used is SSE. The stellar evolution is run at 10 Myr increments. The N-Body code then takes the new masses and simulates the gravitational dynamics for 10 Myr as well, with a timestep of 0.1 Myr (i.e. it uses 100 timesteps to move the gravitational simulation forward by 10 Myr).
-\begin{figure}
-    \centering
-    \includegraphics[width=\hsize]{img/massfraction_over_time.png}
-    \caption{REPLACE}\label{fig:massfraction}
-\end{figure}
 
-
-
-\section{Stellar Evolution \& Gravitational Dynamics} \label{sec:SE_GD}
+To find the stars that are considered gravitationally bound the HOP algorithm is used \citep{1998ApJ...498..137E}.
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/cluster_max_radius.png}
