@@ -78,7 +78,7 @@ citecolor=black}
 %________________________________________________________________
 
 \section{Introduction}
-In this report, the authors have used the Astrophysical Multipurpose Software Environment, in short AMUSE \citep{2009NewA...14..369P, 2013CoPhC.183..456P, 2013A&A...557A..84P}. Firstly, a stellar cluster is created where the gravitational interactions between the stars are calculated by the N-Body algorithm developed by Barnes and Hut, the BHTree \cite{1986Natur.324..446B}. In addition, we set up a giant molecular cloud (GMC) using Smoothed Particle Hydrodynamics (SPH) to simulate the gas and dust in the cloud. In particular, we use the TreeSPH hydrodynamics code `FI' \citep{1989ApJS...70..419H, 1997A&A...325..972G, 2004A&A...422...55P, 2005PhDT........17P}. Choosing an SPH hydrodynamics code enables us to study the gravity in the system as if two N-Body systems are interacting because the gas is split up in different regions represented by SPH particles. The gravity code can act on these particles. In AMUSE two (or more) gravity systems can be coupled using the Bridge interface. The Bridge interface, thus, is used to couple the GMC and the stellar cluster.
+In this report, the authors have used the Astrophysical Multipurpose Software Environment, in short AMUSE \citep{2009NewA...14..369P, 2013CoPhC.183..456P, 2013A&A...557A..84P}. Firstly, a stellar cluster is created where the gravitational interactions between the stars are calculated by the N-Body algorithm developed by Barnes and Hut, the BHTree \cite{1986Natur.324..446B}. In addition, we set up a giant molecular cloud (GMC) using Smoothed Particle Hydrodynamics (SPH) \citep{1977MNRAS.181..375G} to simulate the gas and dust in the cloud. In particular, we use the TreeSPH hydrodynamics code `FI' \citep{1989ApJS...70..419H, 1997A&A...325..972G, 2004A&A...422...55P, 2005PhDT........17P}. Choosing an SPH hydrodynamics code enables us to study the gravity in the system as if two N-Body systems are interacting because the gas is split up in different regions represented by SPH particles. The gravity code can act on these particles. In AMUSE two (or more) gravity systems can be coupled using the Bridge interface. The Bridge interface, thus, is used to gravitationally couple the GMC and the stellar cluster.
 
 % \begin{table*}
 %     \caption{General properties of the Stellar Evolution codes \citep{AMUSEdocumentation}}
@@ -122,47 +122,76 @@ In this report, the authors have used the Astrophysical Multipurpose Software En
 %     \end{tabular}
 % \end{table}
 
-% \begin{figure}
-%     \centering
-%     \includegraphics[width=\hsize]{img/stellar_phases_counts_without_main_sequence.png}
-%     \caption{Stars in two stellar evolution categories over time (excluding main sequence stars).}\label{fig:phases_without_ms}
-% \end{figure}
+\section{Answers to questions}
 
-\section{Comments on initial code}
+% Not sure is this has been paraphrased correctly below.
+% .... from AMUSE documentation: ``The bridgesys is flexible but care should be taken in order to obtain valid results. For one thing, there is no restriction or check on the validity of the assumption of well seperated dynamics: for example any system could be split up and put together in bridge, but if the timestep is chosen to be larger than the timestep criterion of the code, the integration will show errors.'' ....
 
+% This question can be answered right after the part in the introduction where we mention the Bridge interface.
+\textit{The code contains both an N-body code (gravity) and an SPH code (hydro) but no call to evolve model for either code. Where is evolve model called for these codes, and with which time interval is it called?} The Bridge interface has a built-in function bridge.evolve(), that will evolve all gravitational systems added to the bridge. The time step used to evolve the GMC and the cluster is given upon initialization of the Bridge. Here, we use 0.1 Myr as time interval. Note that one ought to be cautions with the choice of time interval. If the chosen time interval is smaller than the timestep criterion of the integrator attached to the Bridge, the integrator algorithm breaks down.
 
-.... from AMUSE docmumentation: ``The bridgesys is flexible but care should be taken in order to obtain valid results. For one thing, there is no restriction or check on the validity of the assumption of well seperated dynamics: for example any system could be split up and put together in bridge, but if the timestep is chosen to be larger than the timestep criterion of the code, the integration will show errors.'' ....
+% .... from AMUSE documentation: ``The main idea is that systems experience each others gravity through periodic velocty kicks with ordinary evolution in between - the evolution is thus described by an alternation of drift (D) and kick (K) operators, here chosen as:
 
-The code contains both an N-body code (gravity) and an SPH code (hydro) but no call to evolve model
-for either code. Where is evolve model called for these codes, and with which time interval is it called?
+%   K(1/2 dt) D(dt) K(1/2 dt)'' ....
 
-How is the gravitational force of the gas on the cluster calculated? And of the cluster on the gas?
-What errors could this introduce? How could these be solved?
+% This question can also be answered right after the part in the introduction where we mention the Bridge interface.
+\textit{How is the gravitational force of the gas on the cluster calculated? And of the cluster on the gas? What errors could this introduce? How could these be solved?}
+By adding systems to the Bridge interface, the systems themselves are gravitationally evolved with the most appropriate algorithm. The system as a whole is evolved in a self-consistent manner. In this particular implementation, the gravitational force of the gas on the cluster is calculated by the Bridge interface. This is true as well for the gravity of the cluster acting on the gas in the GMC (the SPH particles). The way this is done is, firstly, by calculating the `kick' one system experiences due to the gravity of the other system over time $dt/2$. Secondly, the evolution of both systems separately changes the cluster and GMC properties over time $dt$. Thirdly, another `kick' event takes place over time $dt/2$. Finally, these three steps are repeated until the end time of the simulation has been reached.
 
-What is the mass of a 'star' in the star cluster. What is the mass of a 'gas' particle in the GMC. Is
-this a problem and why?
+% .... from AMUSE documentation: ``There is an issue with the synchronization: some codes do not end on the exact time of an evolve, or need an explicit sync call. In these cases it is up to the user to determine whether bridge can be used (an explicit sync call may induce extra errors that degrade the order of the integrator)'' ....
+This might prove problematic when REPLACE. The errors introduced are REPLACE.
 
-What is the smoothing length of the SPH kernel function? What does that mean?
+\textit{What is the mass of a 'star' in the star cluster. What is the mass of a 'gas' particle in the GMC. Is this a problem and why?} The stars are represented by the particles parameter, that is the result of a function call to the new\_plummer\_model function. This is an implementation of the Plummer model \citep{1911MNRAS..71..460P}. This means that all stars have the same mass that is given by the division of the total cluster mass by the number of stars. By default, this is $10^6$ MSun/128 stars gives a mass of 7812.5 Msun per star. Note that this may change due to choosing different cluster masses and/or different numbers of stars. For the gas all masses are equal too for each SPH particle. Given the default total mass of $10^7$ MSun 1024 divided over 1024 SPH particles, the mass is \~9766 MSun per gas SPH particle in the GMC. 
 
-What is the u parameter on the gas particles? How does it aect the simulation?
+The per-particle mass of the SPH particles is slightly higher than the mas of a star. We do not consider this a problem. However, the stellar mass is three decades higher than unity. This means that the stellar evolution would occur on timescales of roughly a year. For this simulation stellar evolution is neglected, but such high mass stars are not physical and is therefore a problem. In addition, a problematic assumption of the the Plummer sphere is that all stars have the same mass. Initializing the stars with a more realistic initial mass function would yield more realistic, more physical results. To use the Plummer model as a mere toy model is interesting though, albeit with the aforementioned caveats.
 
-Explain what happens with the orbital parameters calculated in put in orbit if you set v inf = 0 and
-why?
+\textit{What is the smoothing length of the SPH kernel function? What does that mean?}
+The smoothening length of the SPH kernel function is the spatial distance between the particles representing an area of gas.
+% Fi.py line 1899: ``Eps-is-h-flag. True means: set gas particles gravitational epsilon is set to h (SPH smoothning length)''. In CA_HD.py line 57 we set the eps_is_h_flag to True.
+% Pelupessy 2005 (PhD thesis) implies that for W(r; h) we take the spline kernel of Monaghan & Lattanzio (1985). This could provide insight into what the smoothening length is?
 
-Explain in detail what the call channels.copy() does.
+\textit{What is the u parameter on the gas particles? How does it affect the simulation? Explain what happens with the orbital parameters calculated in put in orbit if you set $v_\infty = 0$ and why?}
 
-Why did we choose to make the SPH particles look bigger and partially transparent?
+% .... Python documentation: ``To change a sequence you are iterating over while inside the loop (for example to duplicate certain items), it is recommended that you first make a copy. Looping over a sequence does not implicitly make a copy. The slice notation makes this especially convenient:'' ....
+% .... AMUSE documentation: `` Part of interaction between codes in AMUSE is based on exchanging data between the community codes or exchanging data between these codes and AMUSE. As you might have noticed in the pervious tutorial topic, every code provides access to particle collections or grids. The data of these collections or grids live inside the code, while the data of collections created in the script live inside the python process.
 
-Copy and rewrite the movie code to only produce a single frame of this movie (as pdf).
+% Background: All data storage of particle collections (or grids) is implemented by different storage classes. AMUSE supports storage classes that simply store the data in python lists and numpy arrays. AMUSE also supports storage classes that send messages to the codes to perform the actual storage and retrieval. At the script level the interface to these classes is all the same, so in normal use they behave the same. The performance of the different storage classes will vary, for a code storage the data may be sent over an internet connection causing slower reaction times. Smart usage of channels and caching data in memory sets will increase performance. '' ....
+% NB this might be utterly untrue, but what else could the copy do?
+\textit{Explain in detail what the call channels.copy() does.}
+The Channels class is an object that holds an instance of a list named \_channels as a class variable. An item is appended to the channels list when the add\_channel function is called (here, once for the GMC and once for the stellar cluster). The Python documentation states that it is good practice to copy an instance of a list prior to iteration. As for the AMUSE implementation of the Channel object, the copy function loops over all channels added to the self.\_channels list and makes a copy of it. According to the AMUSE documentation this is done because the parameters in the channel list require updating them after running the evolve method. The channel list `lives' in the Python script whereas the evolved parameters `live' in the underlying community code. The copy function call takes care of the data exchange between several codes.
+
+% Placement could be as part of the comments on Fig.~\ref{fig:GMC_with_cluster}
+% todo: check the sizes of the particles.
+\textit{Why did we choose to make the SPH particles look bigger and partially transparent?} Fig.~\ref{fig:GMC_with_cluster} shows the GMC and cluster. Notice that the SPH particles are bigger and partially transparent because, in fact, they are. The SPH particles are a representation of an entire region of gas. The stars should be able to move trough the SPH only interacting with the region of gas in part. As indicated above, the SPH particles are heavier than the stars. The size might be used as an indication of mass rather than of physical size. REPLACE (idk if this is true) In addition, the smoothening length of the kernel is much bigger than the radius of the star. The physical size of the SPH particles are, in fact, bigger than the stars. It stands to reason that the SPH particles are therefore bigger plotted but also that they are transparent.
+
+\textit{Copy and rewrite the movie code to only produce a single frame of this movie (as pdf).} See Fig.~\ref{fig:GMC_with_cluster}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/test-44-8.png}
+    \caption{Snapshot of the GMC (blue, centered) and the Cluster (black) orbiting around the cluster.}\label{fig:GMC_with_cluster}
+\end{figure}
+
+\textit{Vary the initial parameters of the simulation and produce an image of the following outcomes, if one is not possible, discuss why:}
+\begin{itemize}
+    \item Both star cluster and GMC remain intact.
+    \item The star cluster is disrupted by the GMC.
+    \item The GMC is disrupted by the star cluster.
+    \item The star cluster takes some gas from the GMC.
+    \item The star cluster is captured and remains inside the GMC.
+\end{itemize}
 
 \section{Multiple GMC's}
 
-How does the computation time scale with the number of GMC's, assuming that each GMC has the
-same initial mass and number of particles.
+\textit{How does the computation time scale with the number of GMC's, assuming that each GMC has the same initial mass and number of particles.}
 
-The impact parameters (d and v1) between the star cluster and the rst GMC are easy to choose.
-Discuss dierent methods to choose the impact parameters between the star cluster and the later
-clusters, what is the main challenge here?
+\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?}
+
+\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.}
+
+\textit{Which changes in the star cluster's structural parameters can explain these differences.}
+
+
 
 \section{Discussion}\label{sec:discussion}
 
