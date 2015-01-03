@@ -246,8 +246,10 @@ The parameter space is varied as following. The values of $v_\infty$, in unit km
     \caption{Using $v_\infty = 25$ km/s and $d = 5$ parsec yields a fully captured cluster by the cloud.}\label{fig:v_25_d_5}
 \end{figure}
 
-\section{Multiple GMC's}
+\section{Multiple GMCs}
+When a star cluster moves through its neighbourhood it may interact with not just one, but multiple gas clouds. To effectively simulate the cluster interacting with multiple distinct GMCs they need to be spaced far enough apart to not interact with each other. I.e. we do not want the GMCs to merge, otherwise the simulation is simulating a scenario where the cluster is still interacting with just one GMC, that just happens to be bigger. Ideally the cluster is really only interacting with one GMC in the simulation at a time. Adding the extra GMCs does add computational complexity. First of all the simulated time needs to be longer, because the time that the cluster is traveling in between the GMCs needs to be added; the simulation is not just simulating the time the cluster is actually interacting with a GMC anymore. This is dependent on the spacing in between GMCs, which is ideally large so that there is not too much interaction between GMCs. Making this distance too large however can blow up the simulation time.
 
+<<<<<<< HEAD
 \textit{How does the computation time scale with the number of GMC's, assuming that each GMC has the same initial mass and number of particles.} See Fig.~\ref{fig:scaling} REPLACE
 
 \begin{figure}
@@ -255,12 +257,35 @@ The parameter space is varied as following. The values of $v_\infty$, in unit km
     \includegraphics[width=\hsize]{img/multi_gmc_timings.png}
     \caption{REPLACE}\label{fig:scaling}
 \end{figure}
+=======
+The second computational challenge is that even if the cluster is only interacting with one GMC at a time, adding the extra GMCs will have the hydrodynamics of the currently non-interacting GMCs be simulated as well during the entire simulation run. This adds overhead. Because adding extra GMCs to the simulation increases the number of years that need to be simulated, timing a full simulation run with different number of GMCs does not give full insight into this extra overhead. It may just be the extra simulation time added by the travel time between GMCs that is measured. Instead a fixed 4Myr simulation run is timed for simulations with one to ten GMCs. This is showcased in figure~\ref{fig:multi_GMCs_timings}, where it can be seen that the computation time for a set amount of simulated years increases linearly as more GMCs are added. This could be considered undesirable, because we're only interested in GMCs when they're interacting with the cluster. When they're not, their simulation could be wasted computational resources (given the important assumption that no significant change from the initial states of the GMCs occurs until they start interacting with the cluster).
+>>>>>>> 3f333c3e3313e4ecf9f9c13d828110b9b29d219c
 
-\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?}
+Besides the computational challenges of having multiple GMCs in one simulation one also needs to set up the simulation in such a way that the cluster will in fact interact with the GMCs, rather than completely miss them. Ideally one would want to set up so that the impact parameter for each cluster-GMC encounter can be controlled. One approach could be to assume a hyperbolic orbit for the first GMC encounter. Based on that a escape path and escape velocity can be calculated. The escape velocity can be then be used as the $v_\infty$ for the next interaction and based on the calculated path the second GMC can be positioned. The same attributes can be calculated for the second encounter and be used to be place the third GMC, and so forth.
 
-\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.}
+One huge issue with this approach is that the GMC-cluster encounters are not nice, clean gravitational encounters between point masses. In fact, that the entire motivation for running sophisticated simulations for these encounters. Thus the exact path and speed the cluster will take when exiting are hard to predict.  And each additional GMC encounter will compound to the error in the predicted path of the cluster. This is showcased in figure~\ref{fig:two_GMCs}. The second (left) GMC was put on the predicted path the star cluster would take after encountering the first (middle) GMC. In the end only two star took this predicted path. 
 
-\textit{Which changes in the star cluster's structural parameters can explain these differences.}
+One potential simplification that can be made is to place all GMCs beyond the first directly on the predicted exit path of the cluster based on the first GMC encounter. This would limit the error somewhat to the first predicted escape path. If this is somewhat accurate, it will end up interacting with the other GMCs. This is in fact how the simulation for figure~\ref{fig:two_GMCs} was set up. The big downside is that there is no control of the impact parameter of the encounters beyond the first one. And it is still not a guarantee for success, because the prediction based on the first interaction may still be wrong.
+
+Instead we can go back to our assumption that nothing much interesting happens when a GMC is not interacting with the cluster and only simulate one interaction at a time, without the other GMCs being part of the simulation during said simulated encounters. After each encounter the end state of the cluster is taken and used as the start state of the cluster at the next encounter. This kills two birds with one stone: it lowers the computational overhead and it gives more direct control over setting up the parameters for the encounters.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/multi_gmc_timings.png}
+    \caption{Number of seconds that 4Myr simulation needs to run, showcasing a linear increase in the computation time as more GMCs are added to the simulation.}\label{fig:multi_GMCs_timings}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/two_gmcs_sim.png}
+    \caption{Simulation of a cluster interacting with two GMCs}\label{fig:two_GMCs}
+\end{figure}
+%\textit{How does the computation time scale with the number of GMC's, assuming that each GMC has the same initial mass and number of particles.}
+
+%\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?}
+
+%\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.}
+
+%\textit{Which changes in the star cluster's structural parameters can explain these differences.}
 
 
 
