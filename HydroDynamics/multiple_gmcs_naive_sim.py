@@ -66,7 +66,6 @@ def put_in_orbit(cluster, clouds, d, v_inf):
 
 
     t_end = (2 * r / v) * len(clouds) + (len(clouds)-1) * (5*r)/v
-    t_end = 0.2 * r / v
     return cluster, gas, t_end
 
 def setup_codes(cluster, gas, nbody_converter, gas_converter):
