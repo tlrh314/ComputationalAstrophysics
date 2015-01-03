@@ -52,20 +52,21 @@ def put_in_orbit(cluster, clouds, d, v_inf):
 
     asymptote_intersection_distance = r * numpy.tan(approach_angle)
 
-    #angle between approach and departure (along asymptotes) is 2*theta
+    # angle between approach and departure (along asymptotes) is 2*theta
     theta = numpy.arccos(1./e)
     outgoing_angle = 2 * theta - numpy.pi/2. - approach_angle
 
 
-    # place additional clouds on a direct pathof the outgoing cluster 
+    # place additional clouds on a direct path of the outgoing cluster 
     for i, cloud in enumerate(clouds[1:]):
-        cloud.x -=  numpy.sin(outgoing_angle) * 10 * r * (i+1)
-        cloud.y +=  asymptote_intersection_distance - \
-                numpy.cos(outgoing_angle) * 10 * r * (i+1)
+        cloud.x +=  numpy.sin(outgoing_angle) * 5 * r * (i+1)
+        cloud.y +=  asymptote_intersection_distance + \
+                numpy.cos(outgoing_angle) * 5 * r * (i+1)
         gas.add_particles(cloud)
 
 
-    t_end = (2 * r / v) * len(clouds) + (len(clouds)-1) * (10*r)/v
+    t_end = (2 * r / v) * len(clouds) + (len(clouds)-1) * (5*r)/v
+    t_end = 0.2 * r / v
     return cluster, gas, t_end
 
 def setup_codes(cluster, gas, nbody_converter, gas_converter):
