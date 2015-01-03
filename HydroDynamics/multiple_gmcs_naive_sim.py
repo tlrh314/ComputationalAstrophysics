@@ -1,4 +1,6 @@
 import numpy
+from time import time
+import pickle
 
 from amuse.units import units, constants, nbody_system
 from amuse.units.optparse import OptionParser
@@ -88,11 +90,13 @@ def setup_codes(cluster, gas, nbody_converter, gas_converter):
     return gravity, hydro, bridge, channels
 
 def evolve_cluster_and_cloud(Ncl, Mcl, Rcl, Ngas, Mgas, Rgas,
-        d, v_inf, dt, filename, Nclouds):
+        d, v_inf, dt, filename, Nclouds, forced_t_end = None):
     cluster, nbody_converter = create_cluster(Ncl, Mcl, Rcl)
     clouds, gas_converter = create_giant_molecular_clouds(Ngas, Mgas, 
             Rgas, Nclouds)
     cluster, gas, t_end = put_in_orbit(cluster, clouds, d, v_inf)
+    if forced_t_end:
+        t_end = forced_t_end
     print "t end", t_end
 
     gravity, hydro, bridge, channels = setup_codes(cluster, gas,
@@ -123,12 +127,22 @@ if __name__ == "__main__":
     impact_parameter = 150|units.parsec
     v_infinity = 1|units.kms
     timestep = 0.2|units.Myr
-    number_of_clouds = 2
+    #number_of_clouds = 2
+    t_end = 4|units.Myr
     filename = "test.amuse"
-    evolve_cluster_and_cloud(cluster_stars, cluster_mass, cluster_radius, 
-            gas_particles, gas_mass, gas_radius, impact_parameter, 
-            v_infinity, timestep, filename, number_of_clouds)
+    time_deltas = []
+    for number_of_clouds in xrange(1, 11):
+        start = time()
+        evolve_cluster_and_cloud(cluster_stars, cluster_mass, cluster_radius, 
+                gas_particles, gas_mass, gas_radius, impact_parameter, 
+                v_infinity, timestep, filename, number_of_clouds, t_end)
+        end = time()
+        delta = end-start
+        print delta
+        time_deltas.append((number_of_clouds, delta))
 
+    print time_deltas
+    pickle.dump(time_deltas, open("multi_gmc_timings.dat", "wb"))
 
 
 
