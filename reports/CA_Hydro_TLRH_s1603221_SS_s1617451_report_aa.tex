@@ -147,11 +147,9 @@ Furthermore we assume that the stars are point masses. In contrast to the SPH pa
 Next, we focus on the implementation of the Fi algorithm. Specifically, we examine the smoothening length of the SPH kernel function and wonder what that means. The smoothening length of the SPH kernel function is the spatial distance between the particles representing an area of gas. \cite{1985A&A...149..135M} give an expression for the kernel REPLACE \\
 % Fi.py line 1899: ``Eps-is-h-flag. True means: set gas particles gravitational epsilon is set to h (SPH smoothning length)''. In CA_HD.py line 57 we set the eps_is_h_flag to True.
 % Pelupessy 2005 (PhD thesis) implies that for W(r; h) we take the spline kernel of Monaghan & Lattanzio (1985). This could provide insight into what the smoothening length is?
-
 % \textit{What is the u parameter on the gas particles? How does it affect the simulation?}
 \noindent \textbf{The $u$ parameter} \\
-Another interesting parameter to focus on is the $u$ parameter on the gas particles and the way it affects the simulation. The parameter $u$ has units of m$^2\cdot$s$^{-2}$, or velocity squared.
-
+The internal energy of each SPH particle is important in a hydrodynamic simulation. The specific internal energy determines how much heat is essentially stored in each particle and as such can have a signicicant influence on a simulation's outcome. E.g. one would expect a relatively static GMC if the specific internal energies are low and a lot more movement when it is higher. In the simulation is controled by the $u$ parameter of the gas particles. The parameter $u$ has units of m$^2\cdot$s$^{-2}$, or velocity squared.
 % \textit{Explain what happens with the orbital parameters calculated in put\_in\_orbit if you set $v_\infty = 0$ and why?}
 \noindent \textbf{Orbital parameters} \\
 Yet another focus shift occurs in the following paragraphs. We comment on the method to calculate the orbital parameters in the put\_in\_orbit function. The following formulae are used to calculate the orbital parameters.
