@@ -144,12 +144,21 @@ Furthermore we assume that the stars are point masses. In contrast to the SPH pa
 
 % \textit{What is the smoothing length of the SPH kernel function? What does that mean?}
 \noindent \textbf{SPH Kernel} \\
-Next, we focus on the implementation of the Fi algorithm. Specifically, we examine the smoothening length of the SPH kernel function and wonder what that means. The smoothening length of the SPH kernel function is the spatial distance between the particles representing an area of gas. \cite{1985A&A...149..135M} give an expression for the kernel REPLACE \\
+Next, we focus on the implementation of the Fi algorithm. Specifically, we examine the smoothing length of the SPH kernel function and wonder what it means. The smoothing length of the SPH kernel function is the spatial distance between the particles representing an area of gas. The SPH particles obtain their attributes by summing over the particles in their vicinity. Objects closer to the particles will contribute more strongly towards the properties of the SPH particle. Ideally, the contributions of all particles are included. For instance in the Gaussian kernel this occurs at high computational cost to account for relatively small effects. Alternatively, a cubic spline function is used. \cite{1985A&A...149..135M} give an expression for such a spline kernel. However, we consider the exact inner workings of the kernel mostly as a black box. In other words, we assume it has been implemented correctly in the AMUSE Fi code. It would be interesting to further examine the kernel but this is outside the scope of our research and we refer the reader to the cited article. 
+
+Here, we merely state that the kernel depends on the smoothing length $h$ as $W(r,h) \propto 3/(4\pi h^3)$ and that is a stepwise defined function that equals zero when the distance of a particle exceeds twice the smoothing length. We notice that the kernel is inversely proportional to the smoothing length cubed. To summarize, the smoothing length is the maximum distance at which contributions of the environment influence the properties of the SPH particle.
+% [4/01/15 9:10:35 pm] Shabaz Sultan: 1) SPH particles halen hun attributen door over een omgeving to sommeren
+% [4/01/15 9:10:55 pm] Shabaz Sultan: 2) je wilt dingen sterker meetellen die dichterbij zitten
+% [4/01/15 9:11:35 pm] Shabaz Sultan: 3) een gaussian functie is daarom handig, maar omdat die nooit nul wordt moet je alle andere particles in de berekening meenemen
+% [4/01/15 9:12:05 pm] Shabaz Sultan: 4) ipv kan je cubic spline functies gebruiken die wel naar nul gaan, maar ongeveer Gaussian
+
+
 % Fi.py line 1899: ``Eps-is-h-flag. True means: set gas particles gravitational epsilon is set to h (SPH smoothning length)''. In CA_HD.py line 57 we set the eps_is_h_flag to True.
-% Pelupessy 2005 (PhD thesis) implies that for W(r; h) we take the spline kernel of Monaghan & Lattanzio (1985). This could provide insight into what the smoothening length is?
+% Pelupessy 2005 (PhD thesis) implies that for W(r; h) we take the spline kernel of Monaghan & Lattanzio (1985). This could provide insight into what the smoothing length is?
 % \textit{What is the u parameter on the gas particles? How does it affect the simulation?}
 \noindent \textbf{The $u$ parameter} \\
-The internal energy of each SPH particle is important in a hydrodynamic simulation. The specific internal energy determines how much heat is essentially stored in each particle and as such can have a signicicant influence on a simulation's outcome. E.g. one would expect a relatively static GMC if the specific internal energies are low and a lot more movement when it is higher. In the simulation is controled by the $u$ parameter of the gas particles. The parameter $u$ has units of m$^2\cdot$s$^{-2}$, or velocity squared.
+The internal energy of each SPH particle is important in a hydrodynamic simulation. The specific internal energy determines how much heat is essentially stored in each particle and as such can have a signicicant influence on a simulation's outcome. E.g. one would expect a relatively static GMC if the specific internal energies are low and a lot more movement when it is higher. In the simulation is controled by the $u$ parameter of the gas particles. The parameter $u$ has units of m$^2\cdot$s$^{-2}$, or velocity squared. \\
+
 % \textit{Explain what happens with the orbital parameters calculated in put\_in\_orbit if you set $v_\infty = 0$ and why?}
 \noindent \textbf{Orbital parameters} \\
 Yet another focus shift occurs in the following paragraphs. We comment on the method to calculate the orbital parameters in the put\_in\_orbit function. The following formulae are used to calculate the orbital parameters.
@@ -209,7 +218,7 @@ In this section we discuss the results of a modification in the original code th
 % todo: check the sizes of the particles !! Maybe also remove the mass argument.
 % The radius of the stars is zero and the gas particles have no radius. Perhaps keep the mass argument?
 % \textit{Why did we choose to make the SPH particles look bigger and partially transparent?}
-An example of this visualization is presented in Fig.~\ref{fig:GMC_with_cluster}, where we show the GMC and cluster. Notice that the SPH particles are bigger and partially transparent because, in fact, the SPH particles a representation a region of gas in contrast with the plotted point like representation of the SPH particle. The stars should be able to move trough the SPH and may be interacting with this gas region but it is not a point mass. As indicated in Sec.~\ref{sec:code}, the SPH particles are heavier than the stars. The size in this plot might be thought of as an indication of mass rather than of physical size. %REPLACE (idk if this is true) In addition, the smoothening length of the kernel is much bigger/smaller than the radius of the star. The physical size of the SPH particles are, in fact, bigger than the stars hence they are plotted as slightly bigger dots.
+An example of this visualization is presented in Fig.~\ref{fig:GMC_with_cluster}, where we show the GMC and cluster. Notice that the SPH particles are bigger and partially transparent because, in fact, the SPH particles a representation a region of gas in contrast with the plotted point like representation of the SPH particle. The stars should be able to move trough the SPH and may be interacting with this gas region but it is not a point mass. As indicated in Sec.~\ref{sec:code}, the SPH particles are heavier than the stars. The size in this plot might be thought of as an indication of mass rather than of physical size. %REPLACE (idk if this is true) In addition, the smoothing length of the kernel is much bigger/smaller than the radius of the star. The physical size of the SPH particles are, in fact, bigger than the stars hence they are plotted as slightly bigger dots.
 
 \begin{figure}
     \centering
@@ -320,11 +329,11 @@ In figures~\ref{fig:v_25_d_280_sec}, \ref{fig:v_10_d_10_sec}, \ref{fig:v_15_d_20
     \caption{Using $v_\infty = 0.25$ km/s and $d = 5$ parsec the cluster seemed captured by the GMC in its first encounter.}\label{fig:v_25_d_5_sec}
 \end{figure}
 
-%\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?} REPLACE
+%\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?}
 
-%\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.} REPLACE
+%\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.}
 
-%\textit{Which changes in the star cluster's structural parameters can explain these differences.} REPLACE
+%\textit{Which changes in the star cluster's structural parameters can explain these differences.}
 
 
 
@@ -332,10 +341,9 @@ In figures~\ref{fig:v_25_d_280_sec}, \ref{fig:v_10_d_10_sec}, \ref{fig:v_15_d_20
 
 \section{Conclusions}\label{sec:conclusions}
 \begin{enumerate}
-    \item
-    \item
-    \item
-    \item
+    \item We have been able to successfully simulate a number of interesting cases in a cluster GMC interaction: firstly, both remain intact, second and thirdly, the cluster disrupts the GMC - and vice versa, moreover, the cluster takes some gas from the cluster, and, finally, the cluster is captured by the GMC.
+    \item The computation time scales linearly with number of clusters in a stellar cluster interacting with giant molecular clouds.
+    \item Simulating encounters with subsequent GMCs individually gives greater control over the parameters of said encounters, but is dependent on the assumptions that a cluster is only ever interacting with one GMC at a time and that a GMC with no cluster nearby is relatively static.
 \end{enumerate}
 
 
