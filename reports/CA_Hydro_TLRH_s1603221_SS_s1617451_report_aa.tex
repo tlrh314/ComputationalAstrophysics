@@ -80,24 +80,6 @@ citecolor=black}
 \section{Introduction}
 In this report, the authors have used the Astrophysical Multipurpose Software Environment, in short AMUSE \citep{2009NewA...14..369P, 2013CoPhC.183..456P, 2013A&A...557A..84P}. Firstly, a stellar cluster is created where the gravitational interactions between the stars are calculated by the N-Body algorithm developed by Barnes and Hut, the BHTree \cite{1986Natur.324..446B}. In addition, we set up a giant molecular cloud (GMC) using Smoothed Particle Hydrodynamics (SPH) \citep{1977MNRAS.181..375G} to simulate the gas and dust in the cloud. In particular, we use the TreeSPH hydrodynamics code `FI' \citep{1989ApJS...70..419H, 1997A&A...325..972G, 2004A&A...422...55P, 2005PhDT........17P}. Choosing an SPH hydrodynamics code enables us to study the gravity in the system as if two N-Body systems are interacting because the gas is split up in different regions represented by SPH particles. The gravity code can act on these particles. In AMUSE two (or more) gravity systems can be coupled using the Bridge interface. The Bridge interface, thus, is used to gravitationally couple the GMC and the stellar cluster.
 
-% \begin{table*}
-%     \caption{General properties of the Stellar Evolution codes \citep{AMUSEdocumentation}}
-%     \label{tab:algorithms}
-%     \centering
-%     \begin{tabular}{l l l l l l l l }
-%         \hline\hline
-%         Algorithm & Type & Binary/Single & Metallicity $z$ & Mass $m$ (M\Sun) \\
-%         \hline
-%         MESA & Henyey & Both & All, even 0 & 0.1 - 100 \\
-%         EVTwin & Henyey & Single\footnotemark[1] & 0.02 only & ? \\
-%         SSE & Parameterized & Single & 0.0001 - 0.03 & 0.1 - 100 \\
-%         SeBa & Parameterized & Both & 0.0001 - 0.03 & 0.1 - 100 \\
-%         \hline
-%     \end{tabular}
-% \end{table*}
-% \addtocounter{footnote}{1}
-% \footnotetext[\value{footnote}]{Binaries are not yet available in AMUSE EVTwin Interface.}
-
 % \setlength\tabcolsep{2pt}
 % \begin{table}
 %     \caption[]{Parameters and results of simulations. Here, $z$ is the metallicity, $t_{\rm end}$ the end time of the simulation, $L$ the luminosity, $M$ the mass, $R$ the radius and Runtime is the wall-clock runtime of the algorithm.}
@@ -145,12 +127,55 @@ This might prove problematic when REPLACE. The errors introduced are REPLACE.
 
 The per-particle mass of the SPH particles is slightly higher than the mas of a star. We do not consider this a problem. However, the stellar mass is three decades higher than unity. This means that the stellar evolution would occur on timescales of roughly a year. For this simulation stellar evolution is neglected, but such high mass stars are not physical and is therefore a problem. In addition, a problematic assumption of the the Plummer sphere is that all stars have the same mass. Initializing the stars with a more realistic initial mass function would yield more realistic, more physical results. To use the Plummer model as a mere toy model is interesting though, albeit with the aforementioned caveats.
 
+Furthermore we assume that the stars are point masses. In contrast to the SPH particles that are discrete non-point like masses. Within the simulation, however, the gravitational interactions do work on point masses which is not a true representation of the gas.
+
 \textit{What is the smoothing length of the SPH kernel function? What does that mean?}
 The smoothening length of the SPH kernel function is the spatial distance between the particles representing an area of gas.
 % Fi.py line 1899: ``Eps-is-h-flag. True means: set gas particles gravitational epsilon is set to h (SPH smoothning length)''. In CA_HD.py line 57 we set the eps_is_h_flag to True.
 % Pelupessy 2005 (PhD thesis) implies that for W(r; h) we take the spline kernel of Monaghan & Lattanzio (1985). This could provide insight into what the smoothening length is?
 
-\textit{What is the u parameter on the gas particles? How does it affect the simulation? Explain what happens with the orbital parameters calculated in put in orbit if you set $v_\infty = 0$ and why?}
+\textit{What is the u parameter on the gas particles? How does it affect the simulation?}
+
+\textit{Explain what happens with the orbital parameters calculated in put\_in\_orbit if you set $v_\infty = 0$ and why?}
+The function put\_in\_orbit calculates the orbital elements using the following formulae.
+\begin{align}
+    r &= \text{max}(2d, \, 2 (\left| x_{\rm max \, of \, cluster} + x_{\rm max \, of \, GMC}\right|)) \\
+    \mu &= G (M_{\rm cluster} + M_{\rm GMC}) \\
+    a &= -\frac{\mu}{v_\infty} \label{eq:a} \\
+    e &= 1 - \frac{d}{a} \label{eq:e} \\
+    v &= \sqrt{\mu \left(\frac{2}{r} - \frac{1}{a}\right)} \\
+    \newline \nonumber \\
+    \theta &= \arccos \left(a \frac{1-e^2}{e\cdot r} - \frac{1}{e} \right) \\
+    \alpha &=  \arctan \left(\frac{e\cdot \sin(\theta)}{1 + e\cdot \cos(\theta)}\right) \\
+    \alpha' &= \frac{\pi}{2} - \alpha
+\end{align}
+where $r$ is the radius of the cluster, $x$ the position of, either the cluster or the GMC depending on the subscript, $d$ the impact parameter of the encounter, $G$ Newton's constant, $M$ the total mass of the object given by the subscript, $v_\infty$ the cluster velocity at infinity, $a$ the semi major axis, $e$ the eccentricity, $v$ the velocity of the cluster. With these orbital parameters the true anomaly $\theta$ can be calculated, as well as the flight path angle $\alpha$ and its corresponding approach angle $\alpha'$.
+
+Now we are interested in the theoretical situation $v_\infty = 0$. As can be seen from Eq.~\eqref{eq:a} the semi major axis will become very large for $\lim (v_\infty \rightarrow 0)$. Consequently, Eq.~\eqref{eq:e} yields unity for the eccentricity, thus, an infinite circular orbit. Both the radius and the semi major axis of the cluster will be infinite, so the velocity remain zero. As the eccentricity is unity, $\theta$ will be the $\arccos(\infty\cdot0/\infty - 1)$, which might yield something unpredictable in numerical simulations. Here, we assume it will equal $\arccos(-1) = \pi$. To conclude, the calculated orbital parameters and the true anomaly, flight path angle and approach angle will not yield interesting results for $v_\infty = 0$.
+
+The reason the radius and semi major axis become infinite is that the cluster is at infinity with a velocity of zero. Since the cluster does not move and the gravity depends on one over the radius squared, the gravity pulling the cluster towards the GMC is zero due to the exorbitantly large radius of infinity. Therefore, the initial velocity of zero will remain zero. The eccentricity is unity but it might make more sense to say that there will not be an orbit.
+% def put_in_orbit(cluster, gas, d, v_inf):
+%     r = 2 * (abs(cluster.position).max() + abs(gas.position).max())
+%     r = max(r, 2*d)
+% 
+%     mu = constants.G * (cluster.mass.sum() + gas.mass.sum())
+%     a = -mu/v_inf**2
+%     e = -d/a + 1.
+%     v = (mu * (2./r - 1./a)).sqrt()
+% 
+%     true_anomaly = numpy.arccos(a*(1.-e**2)/(e*r) - 1./e)
+%     flight_path_angle = numpy.arctan(e*numpy.sin(true_anomaly)/
+%             (1 + e*numpy.cos(true_anomaly)))
+%     approach_angle = numpy.pi/2. - flight_path_angle
+% 
+%     cluster.x += r
+%     cluster.vx -= v * numpy.cos(approach_angle)
+%     cluster.vy += v * numpy.sin(approach_angle)
+% 
+%     t_end = 2 * r / v
+%     return cluster, gas, t_end
+
+
 
 % .... Python documentation: ``To change a sequence you are iterating over while inside the loop (for example to duplicate certain items), it is recommended that you first make a copy. Looping over a sequence does not implicitly make a copy. The slice notation makes this especially convenient:'' ....
 % .... AMUSE documentation: `` Part of interaction between codes in AMUSE is based on exchanging data between the community codes or exchanging data between these codes and AMUSE. As you might have noticed in the pervious tutorial topic, every code provides access to particle collections or grids. The data of these collections or grids live inside the code, while the data of collections created in the script live inside the python process.
@@ -158,38 +183,101 @@ The smoothening length of the SPH kernel function is the spatial distance betwee
 % Background: All data storage of particle collections (or grids) is implemented by different storage classes. AMUSE supports storage classes that simply store the data in python lists and numpy arrays. AMUSE also supports storage classes that send messages to the codes to perform the actual storage and retrieval. At the script level the interface to these classes is all the same, so in normal use they behave the same. The performance of the different storage classes will vary, for a code storage the data may be sent over an internet connection causing slower reaction times. Smart usage of channels and caching data in memory sets will increase performance. '' ....
 % NB this might be utterly untrue, but what else could the copy do?
 \textit{Explain in detail what the call channels.copy() does.}
-The Channels class is an object that holds an instance of a list named \_channels as a class variable. An item is appended to the channels list when the add\_channel function is called (here, once for the GMC and once for the stellar cluster). The Python documentation states that it is good practice to copy an instance of a list prior to iteration. As for the AMUSE implementation of the Channel object, the copy function loops over all channels added to the self.\_channels list and makes a copy of it. According to the AMUSE documentation this is done because the parameters in the channel list require updating them after running the evolve method. The channel list `lives' in the Python script whereas the evolved parameters `live' in the underlying community code. The copy function call takes care of the data exchange between several codes.
+The Channels class is an object that holds an instance of a list named \_channels as a class variable. An item is appended to the channels list when the add\_channel function is called (here, once for the GMC and once for the stellar cluster). Within the AMUSE implementation of the Channel object, the copy function loops over all channels added to the self.\_channels list and makes a copy of it. According to the AMUSE documentation this is done because the parameters in the channel list require updating them after running the evolve method. The channel list `lives' in the Python script whereas the evolved parameters `live' in the underlying community code. The copy function call takes care of the data exchange between several codes. Specifically, the N-Body cluster simulation has its own set of particles where the gravity integrator acts upon. In addition, the GMC has its own set of particles as input for the Fi integrator. Now, both sets of particles require an update once the evolve method has been called to synchronize the underlying data structures.
 
+\section{The $d$-$v_\infty$ plane} \label{sec:dvplane}
+%\textit{Copy and rewrite the movie code to only produce a single frame of this movie (as pdf).} 
+We now turn to the results of a modification in the original code provided that enables us to vary the impact parameter $d$ and the cluster velocity at infinity $v_\infty$. We are interested in visualization of several interesting cases that we will discuss in Tab.~\ref{tab:cases} and its associated Figures.
 % Placement could be as part of the comments on Fig.~\ref{fig:GMC_with_cluster}
-% todo: check the sizes of the particles.
-\textit{Why did we choose to make the SPH particles look bigger and partially transparent?} Fig.~\ref{fig:GMC_with_cluster} shows the GMC and cluster. Notice that the SPH particles are bigger and partially transparent because, in fact, they are. The SPH particles are a representation of an entire region of gas. The stars should be able to move trough the SPH only interacting with the region of gas in part. As indicated above, the SPH particles are heavier than the stars. The size might be used as an indication of mass rather than of physical size. REPLACE (idk if this is true) In addition, the smoothening length of the kernel is much bigger than the radius of the star. The physical size of the SPH particles are, in fact, bigger than the stars. It stands to reason that the SPH particles are therefore bigger plotted but also that they are transparent.
-
-\textit{Copy and rewrite the movie code to only produce a single frame of this movie (as pdf).} See Fig.~\ref{fig:GMC_with_cluster}.
+% todo: check the sizes of the particles !! Maybe also remove the mass argument.
+% \textit{Why did we choose to make the SPH particles look bigger and partially transparent?}
+An example of this visualization is presented in Fig.~\ref{fig:GMC_with_cluster}, where we show the GMC and cluster. Notice that the SPH particles are bigger and partially transparent because, in fact, the SPH particles a representation a region of gas in contrast with the plotted point like representation of the SPH particle. The stars should be able to move trough the SPH and may be interacting with this gas region but it is not a point mass. As indicated in Sec.~\ref{sec:REPLACE}REPLACE, the SPH particles are heavier than the stars. The size in this plot might thought of as an indication of mass rather than of physical size. REPLACE (idk if this is true) In addition, the smoothening length of the kernel is much bigger/smaller than the radius of the star. The physical size of the SPH particles are, in fact, bigger than the stars hence they are plotted as slightly bigger dots.
 
 \begin{figure}
     \centering
     \includegraphics[width=\hsize]{img/test-44-8.png}
-    \caption{Snapshot of the GMC (blue, centered) and the Cluster (black) orbiting around the cluster.}\label{fig:GMC_with_cluster}
+    \caption{Snapshot a stellar cluster (black) in orbit around a giant molecular cloud (blue, centered). The cloud is plotted transparent points because the dots indicate smoothed particle hydrodynamics particles representing regions of gas, not point masses.}\label{fig:GMC_with_cluster}
 \end{figure}
 
-\textit{Vary the initial parameters of the simulation and produce an image of the following outcomes, if one is not possible, discuss why:}
-\begin{itemize}
-    \item Both star cluster and GMC remain intact.
-    \item The star cluster is disrupted by the GMC.
-    \item The GMC is disrupted by the star cluster.
-    \item The star cluster takes some gas from the GMC.
-    \item The star cluster is captured and remains inside the GMC.
-\end{itemize}
+The parameter space is varied as following. The values of $v_\infty$, in unit km/s, vary from 5 to 25 at intervals of 5, and from 25 to 300 with a step size of 25. For each $v_\infty$ value we simulate the impact parameter $d$, in unit parsec, from 5 to 15 incrementing with 5, and from 20 to 300 with 20 units between the data points.
 
-\section{Multiple GMC's}
+%\textit{Vary the initial parameters of the simulation and produce an image of the following outcomes, if one is not possible, discuss why:}
 
-\textit{How does the computation time scale with the number of GMC's, assuming that each GMC has the same initial mass and number of particles.}
+\begin{table*}
+    \caption{Interesting cases in the $d$,$v_\infty$-plane. Here $d$ is the impact parameter and $v_\infty$ is the initial cluster velocity placed at infinity. We have used AMUSE to simulate interactions of a stellar cluster using the BHTree algorithm with and a giant molecular cloud using the Fi smoothed particle hydrodynamics algorithm.}
+    \label{tab:cases}
+    \centering
+    \begin{tabular}{l c c c}
+        \hline\hline
+        Case & $v_\infty$ & $d$ & Shown in \\
+        \hline
+        Both star cluster and GMC remain intact. & 25 & 280 & Fig.~\ref{fig:v_25_d_280} \\
+        The star cluster is disrupted by the GMC. & 10 & 10 & Fig.~\ref{fig:v_10_d_10} \\
+        The GMC is disrupted by the star cluster. & 15 & 20 & Fig.~\ref{fig:v_15_d_20} \\
+        The star cluster takes some gas from the GMC. & 75 & 80 & Fig.~\ref{fig:v_75_d_80.png} \\
+        The star cluster is captured and remains inside the GMC. & 25 & 5 & Fig.~\ref{fig:v_25_d_5} \\
+        \hline
+    \end{tabular}
+\end{table*}
 
-\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/v_25_d_280.png}
+    \caption{Snapshot of a stellar cluster that has initial velocity at infinity $v_\infty = 25$ km/s and giant molecular cloud with impact parameter $d = 280$ parsec. From this image it can clearly be seen that both the cluster and the cloud remain intact. The end time of the simulation $t$ is indicated in the upper left corner.}\label{fig:v_25_d_280}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/v_10_d_10.png}
+    \caption{Here $v_\infty = 10$ km/s and $d = 10$ parsec results in a disruption of the cluster by the cloud.}\label{fig:v_10_d_10}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/v_15_d_20.png}
+    \caption{With initial parameters $v_\infty = 15$ km/s and $d = 20$ parsec we observe that the cloud is disrupted by the cluster.}\label{fig:v_15_d_20}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/v_75_d_80.png}
+    \caption{Simulating with $v_\infty = 15$ km/s and $d = 20$ parsec it can be seen that some of the gas from the cloud is gravitationally bound by the cluster}\label{fig:v_75_d_80}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/v_25_d_5.png}
+    \caption{Using $v_\infty = 25$ km/s and $d = 5$ parsec yields a fully captured cluster by the cloud.}\label{fig:v_25_d_5}
+\end{figure}
 
-\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.}
+\section{Multiple GMCs}
+When a star cluster moves through its neighbourhood it may interact with not just one, but multiple gas clouds. To effectively simulate the cluster interacting with multiple distinct GMCs they need to be spaced far enough apart to not interact with each other. I.e. we do not want the GMCs to merge, otherwise the simulation is simulating a scenario where the cluster is still interacting with just one GMC, that just happens to be bigger. Ideally the cluster is really only interacting with one GMC in the simulation at a time. Adding the extra GMCs does add computational complexity. First of all the simulated time needs to be longer, because the time that the cluster is traveling in between the GMCs needs to be added; the simulation is not just simulating the time the cluster is actually interacting with a GMC anymore. This is dependent on the spacing in between GMCs, which is ideally large so that there is not too much interaction between GMCs. Making this distance too large however can blow up the simulation time.
 
-\textit{Which changes in the star cluster's structural parameters can explain these differences.}
+% \textit{How does the computation time scale with the number of GMC's, assuming that each GMC has the same initial mass and number of particles.} See Fig.~\ref{fig:scaling} REPLACE
+
+The second computational challenge is that even if the cluster is only interacting with one GMC at a time, adding the extra GMCs will have the hydrodynamics of the currently non-interacting GMCs be simulated as well during the entire simulation run. This adds overhead. Because adding extra GMCs to the simulation increases the number of years that need to be simulated, timing a full simulation run with different number of GMCs does not give full insight into this extra overhead. It may just be the extra simulation time added by the travel time between GMCs that is measured. Instead a fixed 4Myr simulation run is timed for simulations with one to ten GMCs. This is showcased in figure~\ref{fig:multi_GMCs_timings}, where it can be seen that the computation time for a set amount of simulated years increases linearly as more GMCs are added. This could be considered undesirable, because we're only interested in GMCs when they're interacting with the cluster. When they're not, their simulation could be wasted computational resources (given the important assumption that no significant change from the initial states of the GMCs occurs until they start interacting with the cluster).
+
+Besides the computational challenges of having multiple GMCs in one simulation one also needs to set up the simulation in such a way that the cluster will in fact interact with the GMCs, rather than completely miss them. Ideally one would want to set up so that the impact parameter for each cluster-GMC encounter can be controlled. One approach could be to assume a hyperbolic orbit for the first GMC encounter. Based on that a escape path and escape velocity can be calculated. The escape velocity can be then be used as the $v_\infty$ for the next interaction and based on the calculated path the second GMC can be positioned. The same attributes can be calculated for the second encounter and be used to be place the third GMC, and so forth.
+
+One huge issue with this approach is that the GMC-cluster encounters are not nice, clean gravitational encounters between point masses. In fact, that the entire motivation for running sophisticated simulations for these encounters. Thus the exact path and speed the cluster will take when exiting are hard to predict.  And each additional GMC encounter will compound to the error in the predicted path of the cluster. This is showcased in figure~\ref{fig:two_GMCs}. The second (left) GMC was put on the predicted path the star cluster would take after encountering the first (middle) GMC. In the end only two star took this predicted path. 
+
+One potential simplification that can be made is to place all GMCs beyond the first directly on the predicted exit path of the cluster based on the first GMC encounter. This would limit the error somewhat to the first predicted escape path. If this is somewhat accurate, it will end up interacting with the other GMCs. This is in fact how the simulation for figure~\ref{fig:two_GMCs} was set up. The big downside is that there is no control of the impact parameter of the encounters beyond the first one. And it is still not a guarantee for success, because the prediction based on the first interaction may still be wrong.
+
+Instead we can go back to our assumption that nothing much interesting happens when a GMC is not interacting with the cluster and only simulate one interaction at a time, without the other GMCs being part of the simulation during said simulated encounters. After each encounter the end state of the cluster is taken and used as the start state of the cluster at the next encounter. This kills two birds with one stone: it lowers the computational overhead and it gives more direct control over setting up the parameters for the encounters.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/multi_gmc_timings.png}
+    \caption{Number of seconds that 4Myr simulation needs to run, showcasing a linear increase in the computation time as more GMCs are added to the simulation.}\label{fig:multi_GMCs_timings}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\hsize]{img/two_gmcs_sim.png}
+    \caption{Simulation of a cluster interacting with two GMCs}\label{fig:two_GMCs}
+\end{figure}
+%\textit{How does the computation time scale with the number of GMC's, assuming that each GMC has the same initial mass and number of particles.}
+
+%\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?}
+
+%\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.}
+
+%\textit{Which changes in the star cluster's structural parameters can explain these differences.}
 
 
 
