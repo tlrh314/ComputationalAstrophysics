@@ -217,7 +217,7 @@ An example of this visualization is presented in Fig.~\ref{fig:GMC_with_cluster}
     \caption{Snapshot a stellar cluster (black) in orbit around a giant molecular cloud (blue, centered). The cloud is plotted transparent points because the dots indicate smoothed particle hydrodynamics particles representing regions of gas, not point masses.}\label{fig:GMC_with_cluster}
 \end{figure}
 
-The parameter space is varied as following. The values of $v_\infty$, in unit km/s, vary from 5 to 25 at intervals of 5, and from 25 to 300 with a step size of 25. For each $v_\infty$ value we simulate the impact parameter $d$, in unit parsec, from 5 to 15 incrementing with 5, and from 20 to 300 with 20 units between the data points. Within this range of $d$ and $v_\infty$ we obtain the interesting cases given in Table~\ref{tab:cases}, where the parameters can also be found and a reference to the end state of the simulation. Fig.~\ref{fig:v_25_d_280} to Fig.~\ref{fig:v_25_d5} show those end states. The previous paragraph also applies here.
+The parameter space is varied as following. The values of $v_\infty$, in unit km/s, vary from 0.05 to 0.25 at intervals of 5, and from 0.25 to 3 with a step size of 0.25. For each $v_\infty$ value we simulate the impact parameter $d$, in unit parsec, from 5 to 15 incrementing with 5, and from 20 to 300 with 20 units between the data points. Within this range of $d$ and $v_\infty$ we obtain the interesting cases given in Table~\ref{tab:cases}, where the parameters can also be found and a reference to the end state of the simulation. Fig.~\ref{fig:v_25_d_280} to Fig.~\ref{fig:v_25_d5} show those end states. The previous paragraph also applies here.
 
 %\textit{Vary the initial parameters of the simulation and produce an image of the following outcomes, if one is not possible, discuss why:}
 
@@ -229,11 +229,11 @@ The parameter space is varied as following. The values of $v_\infty$, in unit km
         \hline\hline
         Case & $v_\infty$ & $d$ & Shown in \\
         \hline
-        Both star cluster and GMC remain intact. & 25 & 280 & Fig.~\ref{fig:v_25_d_280} \\
-        The star cluster is disrupted by the GMC. & 10 & 10 & Fig.~\ref{fig:v_10_d_10} \\
-        The GMC is disrupted by the star cluster. & 15 & 20 & Fig.~\ref{fig:v_15_d_20} \\
-        The star cluster takes some gas from the GMC. & 75 & 80 & Fig.~\ref{fig:v_75_d_80} \\
-        The star cluster is captured and remains inside the GMC. & 25 & 5 & Fig.~\ref{fig:v_25_d_5} \\
+        Both star cluster and GMC remain intact. & 0.25 & 280 & Fig.~\ref{fig:v_25_d_280} \\
+        The star cluster is disrupted by the GMC. & 0.10 & 10 & Fig.~\ref{fig:v_10_d_10} \\
+        The GMC is disrupted by the star cluster. & 0.15 & 20 & Fig.~\ref{fig:v_15_d_20} \\
+        The star cluster takes some gas from the GMC. & 0.75 & 80 & Fig.~\ref{fig:v_75_d_80} \\
+        The star cluster is captured and remains inside the GMC. & 0.25 & 5 & Fig.~\ref{fig:v_25_d_5} \\
         \hline
     \end{tabular}
 \end{table*}
@@ -241,27 +241,27 @@ The parameter space is varied as following. The values of $v_\infty$, in unit km
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\hsize]{img/v_25_d_280.png}
-    \caption{Snapshot of a stellar cluster that has initial velocity at infinity $v_\infty = 25$ km/s and giant molecular cloud with impact parameter $d = 280$ parsec. From this image it can clearly be seen that both the cluster and the cloud remain intact. The end time of the simulation $t$ is indicated in the upper left corner.}\label{fig:v_25_d_280}.
+    \caption{Snapshot of a stellar cluster that has initial velocity at infinity $v_\infty = 0.25$ km/s and giant molecular cloud with impact parameter $d = 280$ parsec. From this image it can clearly be seen that both the cluster and the cloud remain intact. The end time of the simulation $t$ is indicated in the upper left corner.}\label{fig:v_25_d_280}.
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\hsize]{img/v_10_d_10.png}
-    \caption{Here $v_\infty = 10$ km/s and $d = 10$ parsec results in a disruption of the cluster by the cloud.}\label{fig:v_10_d_10}
+    \caption{Here $v_\infty = 0.10$ km/s and $d = 10$ parsec results in a disruption of the cluster by the cloud.}\label{fig:v_10_d_10}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\hsize]{img/v_15_d_20.png}
-    \caption{With initial parameters $v_\infty = 15$ km/s and $d = 20$ parsec we observe that the cloud is disrupted by the cluster.}\label{fig:v_15_d_20}
+    \caption{With initial parameters $v_\infty = 0.15$ km/s and $d = 20$ parsec we observe that the cloud is disrupted by the cluster.}\label{fig:v_15_d_20}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\hsize]{img/v_75_d_80.png}
-    \caption{Simulating with $v_\infty = 65$ km/s and $d = 80$ parsec it can be seen that some of the gas from the cloud is gravitationally bound by the cluster}\label{fig:v_75_d_80}
+    \caption{Simulating with $v_\infty = 0.75$ km/s and $d = 80$ parsec it can be seen that some of the gas from the cloud is gravitationally bound by the cluster}\label{fig:v_75_d_80}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\hsize]{img/v_25_d_5.png}
-    \caption{Using $v_\infty = 25$ km/s and $d = 5$ parsec yields a partially captured cluster by the cloud. It is not clear from this image if the cluster is fully captures. This should be studied in greater detail prior to drawing conclusions.}\label{fig:v_25_d_5}
+    \caption{Using $v_\infty = 0.25$ km/s and $d = 5$ parsec yields a partially captured cluster by the cloud. It is not clear from this image if the cluster is fully captures. This should be studied in greater detail prior to drawing conclusions.}\label{fig:v_25_d_5}
 \end{figure}
 
 The result in Fig.~\ref{fig:v_25_d_5} we find surprising. Our expectation is that the capture of the cluster by the GMC will not happen. Notice that this is merely a snapshot at one fixed point in time. The upper right stars seem to indicate that the cluster has been disrupted but it might not remain inside the GMC. This particular case requires a more elaborate analysis in order to conclude whether or not it stays inside the GMC. The reason for this expectation is REPLACE
