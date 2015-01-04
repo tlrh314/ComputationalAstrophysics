@@ -279,6 +279,7 @@ One huge issue with this approach is that the GMC-cluster encounters are not nic
 One potential simplification that can be made is to place all GMCs beyond the first directly on the predicted exit path of the cluster based on the first GMC encounter. This would limit the error somewhat to the first predicted escape path. If this is somewhat accurate, it will end up interacting with the other GMCs. This is in fact how the simulation for figure~\ref{fig:two_GMCs} was set up. The big downside is that there is no control of the impact parameter of the encounters beyond the first one. And it is still not a guarantee for success, because the prediction based on the first interaction may still be wrong.
 
 Instead we can go back to our assumption that nothing much interesting happens when a GMC is not interacting with the cluster and only simulate one interaction at a time, without the other GMCs being part of the simulation during said simulated encounters. After each encounter the end state of the cluster is taken and used as the start state of the cluster at the next encounter. This kills two birds with one stone: it lowers the computational overhead and it gives more direct control over setting up the parameters for the encounters.
+In figures~\ref{fig:v_25_d_280_sec}, \ref{fig:v_10_d_10_sec}, \ref{fig:v_15_d_20_sec}, \ref{fig:v_75_d_80_sec} and \ref{fig:v_25_d_5_sec} the end states of the cluster in the simulations from section~\ref{sec:dvplane} are used as the begin state for another GMC encounter. The same GMC size is used, with the same impact parameter. The $v_\infty$ however is based on the end velocity from the first simulated encounter. This tends to be much higher than the $v_\infty$ of said first encounter. Another big difference is that the radius of the cluster tends to have gotten larger after its first encounter. Both changes possible contribute to the fact that for the second encounter it can be seen that the same behaviour during the first encounter with a GMC is not replicated.
 
 \begin{figure}
     \centering
@@ -291,15 +292,43 @@ Instead we can go back to our assumption that nothing much interesting happens w
     \caption{Simulation of a cluster interacting with two GMCs}\label{fig:two_GMCs}
 \end{figure}
 
-\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?} REPLACE
-
-\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.} REPLACE
-
-\textit{Which changes in the star cluster's structural parameters can explain these differences.} REPLACE
 
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\hsize]{img/v_25_d_280_second_encounter.png}
+    \caption{Snapshot of a stellar cluster that has initial velocity at infinity $v_\infty = 0.25$ km/s and giant molecular cloud with impact parameter $d = 280$ parsec. In the first encounter both GMC and cluster remained intact.}\label{fig:v_25_d_280_sec}.
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\hsize]{img/v_10_d_10_second_encounter.png}
+    \caption{The first encounter with $v_\infty = 0.10$ km/s and $d = 10$ parsec resulted in a cluster disrupted by the GMC.}\label{fig:v_10_d_10_sec}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\hsize]{img/v_15_d_20_second_encounter.png}
+    \caption{With initial parameters $v_\infty = 0.15$ km/s and $d = 20$ parsec the first encounter had the GMC distrupted by the cluster.}\label{fig:v_15_d_20_sec}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\hsize]{img/v_75_d_80_second_encounter.png}
+    \caption{Simulating with $v_\infty = 0.75$ km/s and $d = 80$ parsec in the first encounter the cluster bound some of the gas from the GMC.}\label{fig:v_75_d_80_sec}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\hsize]{img/v_25_d_5_second_encounter.png}
+    \caption{Using $v_\infty = 0.25$ km/s and $d = 5$ parsec the cluster seemed captured by the GMC in its first encounter.}\label{fig:v_25_d_5_sec}
+\end{figure}
 
-\section{Discussion}\label{sec:discussion}
+%\textit{The impact parameters ($d$ and $v_\infty$) between the star cluster and the first GMC are easy to choose. Discuss different methods to choose the impact parameters between the star cluster and the later clusters, what is the main challenge here?} REPLACE
+
+%\textit{Run simulations to find out when and how the second encounter is qualitatively different from a single encounter. Use the different scenarios from assignment 3C as a starting point.} REPLACE
+
+%\textit{Which changes in the star cluster's structural parameters can explain these differences.} REPLACE
+
+
+
+%\section{Discussion}\label{sec:discussion}
 
 \section{Conclusions}\label{sec:conclusions}
 \begin{enumerate}
