@@ -1,3 +1,12 @@
+from amuse.lab import *
+from amuse.units.optparse import OptionParser
+from amuse.ext.molecular_cloud import molecular_cloud
+from amuse.couple.bridge import Bridge
+from amuse.datamodel.particles import Channels
+
+
+import numpy
+
 def create_cluster(Ncl, Mcl, Rcl):
     converter = nbody_system.nbody_to_si(Mcl, Rcl)
     particles = new_plummer_model(Ncl, convert_nbody=converter)
@@ -11,6 +20,28 @@ def create_giant_molecular_cloud(Ngas, Mgas, Rgas):
     particles.velocity *= 0.6
     particles.move_to_center()
     return particles, converter
+
+def put_in_orbit(cluster, gas, d, v_inf):
+    r = 2 * (abs(cluster.position).max() + abs(gas.position).max())
+    r = max(r, 2*d)
+
+    mu = constants.G * (cluster.mass.sum() + gas.mass.sum())
+    a = -mu/v_inf**2
+    e = -d/a + 1.
+    v = (mu * (2./r - 1./a)).sqrt()
+
+    true_anomaly = numpy.arccos(a*(1.-e**2)/(e*r) - 1./e)
+    flight_path_angle = numpy.arctan(e*numpy.sin(true_anomaly)/
+            (1 + e*numpy.cos(true_anomaly)))
+    approach_angle = numpy.pi/2. - flight_path_angle
+
+    cluster.x += r
+    cluster.vx -= v * numpy.cos(approach_angle)
+    cluster.vy += v * numpy.sin(approach_angle)
+
+    t_end = 2 * r / v
+    return cluster, gas, t_end
+
 
 def setup_codes(cluster, gas, nbody_converter, gas_converter):
     gravity = BHTree(nbody_converter)
@@ -31,21 +62,14 @@ def setup_codes(cluster, gas, nbody_converter, gas_converter):
 
     #####################
     stellar = SSE()
-    stars = stellar.particles.add_particles(bodies)
+    stars = stellar.particles.add_particles(cluster)
+
     from_stellar_evolution_to_model \
-        = stellar.particles.new_channel_to(bodies)
+        = stellar.particles.new_channel_to(cluster)
     from_stellar_evolution_to_model.copy_attributes(["mass"])
-
-    bodies.scale_to_standard(converter)
-    gravity.particles.add_particles(bodies)
-
-    from_model_to_gravity = bodies.new_channel_to(gravity.particles)
-    from_gravity_to_model = gravity.particles.new_channel_to(bodies)
-    gravity.commit_particles()
     #####################
 
-
-    return gravity, hydro, bridge, channels
+    return gravity, hydro, bridge, channels, stellar, from_stellar_evolution_to_model
 
 
 def evolve_cluster_and_cloud(Ncl, Mcl, Rcl, Ngas, Mgas, Rgas,
@@ -55,7 +79,7 @@ def evolve_cluster_and_cloud(Ncl, Mcl, Rcl, Ngas, Mgas, Rgas,
     cluster, gas, t_end = put_in_orbit(cluster, gas, d, v_inf)
     print "t end", t_end
 
-    gravity, hydro, bridge, channels = setup_codes(cluster, gas,
+    gravity, hydro, bridge, channels, stellar, stellar_to_cluster = setup_codes(cluster, gas,
             nbody_converter, gas_converter)
 
     time = 0. | units.Myr
@@ -65,6 +89,8 @@ def evolve_cluster_and_cloud(Ncl, Mcl, Rcl, Ngas, Mgas, Rgas,
     while time < (t_end - dt/2.):
         time += dt
         print "evolving to", time
+        stellar.evolve_model()
+        stellar_to_cluster.copy_attributes(["mass", "radius"])
         bridge.evolve_model(time)
         channels.copy()
         write_set_to_file((cluster.savepoint(time), gas.savepoint(time)),
@@ -92,7 +118,7 @@ def parse_options():
             type="float", default = 150|units.parsec,
             help="Impact parameter of the encounter [%default]")
     parser.add_option("-v", dest="v_inf", unit=units.kms,
-            type="float", default = 0|units.kms,
+            type="float", default = 1|units.kms,
             help="Cluster velocity at infinity [%default]")
     parser.add_option("-T", dest="dt", unit=units.Myr,
             type="float", default = 0.2|units.Myr,
