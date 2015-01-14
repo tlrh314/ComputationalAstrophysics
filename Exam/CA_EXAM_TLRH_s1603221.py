@@ -3,18 +3,8 @@ Computational Astrophysics Exam A
 Timo Halbesma, s1603221
 January 14th, 2015. Version 2.0 (POST EXAM)
 
-NB I still have to implement the rest of the plot function. In order to do so I
-have to save the relative energy error as a function of time to file in the
-hybrid_self_gravitating_cluster method. Then I can read the data in the
-make_plots method.
-
-Moreover, I have to implement the plot function for the
+To-do: I have to implement the plot function for the
 half-mass and core-radii as function of time.
-
-Next, I have to rewrite the main method to run three runs and time those runs
-in order to generate the table with the wall-clock times of the three runs.
-
-Finally, I have to style my code a littlebit to make it more handsome.
 
 Also, I still have to answer question 2.
 
