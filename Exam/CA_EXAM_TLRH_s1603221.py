@@ -23,6 +23,7 @@ Question 2)
 """
 
 
+from sys import stdout
 from time import time
 
 from numpy import isnan
@@ -76,15 +77,16 @@ def create_cluster(Ncl, Mstar, Rcl, Mcut):
 
     try:
         import Gnuplot
-    except ImportError:
-        print "Unable to produce plot: couldn't find Gnuplot."
-    else:
         print "Plotting distribution of stars below and above cut-off."
         plotter = Gnuplot.Gnuplot()
         plotter('set terminal post enhance color')
         plotter('set output "CA_Exam_TLRH_PlummerSphere_SalpeterIMF_splitup.ps"')
         plotter.splot(stars_below_cut.position.value_in(units.parsec),
                       stars_above_cut.position.value_in(units.parsec),)
+    except ImportError:
+        print "Unable to produce plot: couldn't find Gnuplot."
+    except AssertionError:
+        print "Fails because on of the sets is empty"
 
     # I return the particles superset because the particles superset is saved
     # when the subset is changed. This superset can be written to file. (:
@@ -94,7 +96,7 @@ def create_cluster(Ncl, Mstar, Rcl, Mcut):
 def setup_codes(stars_below_cut, stars_above_cut, nbody_converter):
     if len(stars_below_cut) is 0:  # direct
         print "There are zero stars below the cut-off, using direct solver!"
-        gravity = Hermite(nbody_converter)
+        gravity = Hermite(nbody_converter, number_of_workers=4)
         gravity.particles.add_particles(stars_above_cut)
         channels = Channels()
         channels.add_channel(gravity.particles.new_channel_to(stars_above_cut))
@@ -164,8 +166,6 @@ def update_progress(progress):
     A value at 1 or bigger represents 100%
     """
 
-    import sys
-
     # Modify length to change the length of the progress bar
     length = 42
     status = ""
@@ -185,8 +185,8 @@ def update_progress(progress):
     block = int(round(length * progress))
     text = "\rprogress: [{0}] {1:.2f}% {2}".\
         format("#" * block + "-" * (length - block), progress * 100, status)
-    sys.stdout.write(text)
-    sys.stdout.flush()
+    stdout.write(text)  # sys function
+    stdout.flush()  # sys function
 
 
 def calculate_energy_error(particles, Etot_init):
@@ -237,7 +237,7 @@ def make_plots(Ncl, Rcl, t_end):
             if data == "hybrid":
                 pyplot.plot(dt, dE, 'b--', label='Hybrid')
             if data == "direct":
-                pyplot.plot(dt, dE, 'ro', label='Direct')
+                pyplot.plot(dt, dE, 'r:', label='Direct')
             if data == "tree":
                 pyplot.plot(dt, dE, 'g-', label='Tree')
 
@@ -285,7 +285,7 @@ if __name__ == "__main__":
 
     options = parse_options()
 
-    generate_data = False
+    generate_data = True
 
     if generate_data:
         # Hybrid
